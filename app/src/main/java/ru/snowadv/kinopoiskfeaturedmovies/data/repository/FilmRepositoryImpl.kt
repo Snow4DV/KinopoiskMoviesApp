@@ -26,7 +26,13 @@ class FilmRepositoryImpl(
         } catch(e: IOException) {
             emit(Resource.Error("Произошла ошибка при загрузке данных, проверьте подключение к сети", cachedFilms))
         } catch(e: HttpException) {
-            emit(Resource.Error("Данные не могут быть получены", cachedFilms))
+            val error = when(e.code()) {
+                404 -> "Страница не найдена"
+                402 -> "Превышен дневной лимит запросов"
+                429 -> "Слишком много запросов"
+                else -> "Произошла очень странная ошибка, наши инженеры уже трудятся, не покладая рук"
+            }
+            emit(Resource.Error(error, cachedFilms))
         }
     }
 
@@ -41,7 +47,12 @@ class FilmRepositoryImpl(
         } catch(e: IOException) {
             emit(Resource.Error("Произошла ошибка при загрузке данных, проверьте подключение к сети", cachedFilm))
         } catch(e: HttpException) {
-            val error = if(e.code() == 404) "Такой фильм не найден" else "Произошла очень странная ошибка, наши инженеры уже трудятся, не покладая рук"
+            val error = when(e.code()) {
+                404 -> "Такой фильм не найден"
+                402 -> "Превышен дневной лимит запросов"
+                429 -> "Слишком много запросов"
+                else -> "Произошла очень странная ошибка, наши инженеры уже трудятся, не покладая рук"
+            }
             emit(Resource.Error(error, cachedFilm))
         }
     }
