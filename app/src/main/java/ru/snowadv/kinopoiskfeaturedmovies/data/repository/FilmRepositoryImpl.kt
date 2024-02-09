@@ -21,11 +21,12 @@ class FilmRepositoryImpl(
         emit(Resource.Loading(cachedFilms))
         try {
             val remoteFilms = api.getFilms(page).toModel()
+            dao.insertFilms(remoteFilms.toEntity(page))
             emit(Resource.Success(remoteFilms))
         } catch(e: IOException) {
             emit(Resource.Error("Произошла ошибка при загрузке данных, проверьте подключение к сети", cachedFilms))
         } catch(e: HttpException) {
-            emit(Resource.Error("Произошла ошибка при загрузке данных, проверьте подключение к сети", cachedFilms))
+            emit(Resource.Error("Данные не могут быть получены", cachedFilms))
         }
     }
 
@@ -35,11 +36,13 @@ class FilmRepositoryImpl(
         emit(Resource.Loading(cachedFilm))
         try {
             val remoteFilm = api.getFilmInfo(id).toModel()
+            dao.insertFilmInfo(remoteFilm.toEntity())
             emit(Resource.Success(remoteFilm))
         } catch(e: IOException) {
             emit(Resource.Error("Произошла ошибка при загрузке данных, проверьте подключение к сети", cachedFilm))
         } catch(e: HttpException) {
-            emit(Resource.Error("Произошла ошибка при загрузке данных, проверьте подключение к сети", cachedFilm))
+            val error = if(e.code() == 404) "Такой фильм не найден" else "Произошла очень странная ошибка, наши инженеры уже трудятся, не покладая рук"
+            emit(Resource.Error(error, cachedFilm))
         }
     }
 }
