@@ -96,7 +96,7 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.50")
     ksp ("com.google.dagger:hilt-android-compiler:2.50")
 
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0-alpha01")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0-beta01")
 
 
     // retrofit
@@ -106,10 +106,14 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.12")
 
 
-    implementation("androidx.compose.material:material:1.5.4")
+    implementation("androidx.compose.material:material:1.6.0")
 
 
     // room
     implementation("androidx.room:room-runtime:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")}
+    implementation("androidx.room:room-ktx:2.6.1")
+
+    // coil
+    implementation("io.coil-kt:coil-compose:2.5.0")
+}

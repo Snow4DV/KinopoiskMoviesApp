@@ -9,7 +9,7 @@ data class FilmDto(
     val genres: List<GenreDto>,
     val isAfisha: Int,
     val nameEn: String?,
-    val nameRu: String,
+    val nameRu: String?,
     val posterUrl: String,
     val posterUrlPreview: String,
     val rating: String,

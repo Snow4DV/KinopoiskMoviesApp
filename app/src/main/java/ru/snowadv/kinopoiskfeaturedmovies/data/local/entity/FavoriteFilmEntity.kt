@@ -11,9 +11,9 @@ data class FavoriteFilmEntity(
     val filmLength: String?,
     val genres: List<String>,
     val nameEn: String?,
-    val nameRu: String,
-    val posterUrl: String,
-    val posterUrlPreview: String,
+    val nameRu: String?,
+    val posterUrl: String?,
+    val posterUrlPreview: String?,
     val rating: String,
     val ratingVoteCount: Int,
     val year: String
