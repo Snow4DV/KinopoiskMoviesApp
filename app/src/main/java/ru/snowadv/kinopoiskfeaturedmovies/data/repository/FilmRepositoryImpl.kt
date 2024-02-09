@@ -2,9 +2,12 @@ package ru.snowadv.kinopoiskfeaturedmovies.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import retrofit2.HttpException
 import ru.snowadv.kinopoiskfeaturedmovies.data.local.FilmsDao
+import ru.snowadv.kinopoiskfeaturedmovies.data.local.entity.FavoriteFilmEntity
 import ru.snowadv.kinopoiskfeaturedmovies.data.remote.KinopoiskApi
+import ru.snowadv.kinopoiskfeaturedmovies.domain.model.Film
 import ru.snowadv.kinopoiskfeaturedmovies.domain.model.FilmInfo
 import ru.snowadv.kinopoiskfeaturedmovies.domain.model.Films
 import ru.snowadv.kinopoiskfeaturedmovies.domain.repository.FilmRepository
@@ -15,7 +18,7 @@ class FilmRepositoryImpl(
     private val api: KinopoiskApi,
     private val dao: FilmsDao
 ): FilmRepository {
-    override fun getFilms(page: Int): Flow<Resource<Films>> = flow {
+    override fun getPopularFilms(page: Int): Flow<Resource<Films>> = flow {
         emit(Resource.Loading())
         val cachedFilms = dao.getFilmsPage(page)?.toModel()
         emit(Resource.Loading(cachedFilms))
@@ -55,5 +58,21 @@ class FilmRepositoryImpl(
             }
             emit(Resource.Error(error, cachedFilm))
         }
+    }
+
+    override fun getFavoriteFilms(): Flow<List<Film>> {
+        return dao.getFavoriteFilms().map { filmList -> filmList.map { it.toModel() } }
+    }
+
+    override fun getFavoriteFilmsIds(): Flow<Set<Long>> {
+        return dao.getFavoriteIds().map { it.toSet() }
+    }
+
+    override suspend fun addFavoriteFilm(film: Film) {
+        dao.addFavoriteFilm(film.toFavEntity())
+    }
+
+    override suspend fun removeFavoriteFilm(filmId: Long) {
+        dao.removeFavoriteFilm(filmId)
     }
 }

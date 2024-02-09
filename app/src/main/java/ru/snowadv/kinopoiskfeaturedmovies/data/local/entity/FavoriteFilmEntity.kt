@@ -1,10 +1,13 @@
-package ru.snowadv.kinopoiskfeaturedmovies.domain.model
+package ru.snowadv.kinopoiskfeaturedmovies.data.local.entity
 
-import ru.snowadv.kinopoiskfeaturedmovies.data.local.entity.FavoriteFilmEntity
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import ru.snowadv.kinopoiskfeaturedmovies.domain.model.Film
 
-data class Film(
+@Entity
+data class FavoriteFilmEntity(
     val countries: List<String>,
-    val filmId: Long,
+    @PrimaryKey val filmId: Long,
     val filmLength: String?,
     val genres: List<String>,
     val nameEn: String?,
@@ -15,8 +18,8 @@ data class Film(
     val ratingVoteCount: Int,
     val year: String
 ) {
-    fun toFavEntity(): FavoriteFilmEntity {
-        return FavoriteFilmEntity(
+    fun toModel(): Film {
+        return Film(
             countries = countries,
             filmId = filmId,
             filmLength = filmLength,

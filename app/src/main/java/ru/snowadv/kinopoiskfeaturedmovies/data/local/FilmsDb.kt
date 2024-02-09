@@ -4,11 +4,12 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import ru.snowadv.kinopoiskfeaturedmovies.data.converter.DatabaseTypeConverter
+import ru.snowadv.kinopoiskfeaturedmovies.data.local.entity.FavoriteFilmEntity
 import ru.snowadv.kinopoiskfeaturedmovies.data.local.entity.FilmInfoEntity
 import ru.snowadv.kinopoiskfeaturedmovies.data.local.entity.FilmsEntity
 
 @Database(
-    entities = [FilmsEntity::class, FilmInfoEntity::class],
+    entities = [FilmsEntity::class, FilmInfoEntity::class, FavoriteFilmEntity::class],
     version = 1,
     exportSchema = false
 )

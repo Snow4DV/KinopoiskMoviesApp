@@ -1,4 +1,4 @@
-package ru.snowadv.kinopoiskfeaturedmovies.ui.theme
+package ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.theme
 
 import android.app.Activity
 import android.os.Build

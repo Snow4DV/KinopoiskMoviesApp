@@ -1,4 +1,4 @@
-package ru.snowadv.kinopoiskfeaturedmovies
+package ru.snowadv.kinopoiskfeaturedmovies.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,7 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import ru.snowadv.kinopoiskfeaturedmovies.ui.theme.KinopoiskFeaturedMoviesTheme
+import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.theme.KinopoiskFeaturedMoviesTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

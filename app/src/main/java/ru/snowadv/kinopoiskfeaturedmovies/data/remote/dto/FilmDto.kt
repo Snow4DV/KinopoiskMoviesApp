@@ -4,7 +4,7 @@ import ru.snowadv.kinopoiskfeaturedmovies.domain.model.Film
 
 data class FilmDto(
     val countries: List<CountryDto>,
-    val filmId: Int,
+    val filmId: Long,
     val filmLength: String?,
     val genres: List<GenreDto>,
     val isAfisha: Int,

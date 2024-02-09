@@ -28,7 +28,7 @@ android {
 
 
 
-        buildConfigField("String", "API_KEY", gradleLocalProperties(rootDir).getProperty("API_KEY"))
+        //buildConfigField("String", "API_KEY", gradleLocalProperties(rootDir).getProperty("API_KEY"))
 
     }
 
@@ -50,6 +50,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
