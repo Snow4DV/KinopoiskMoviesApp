@@ -55,6 +55,7 @@ import ru.snowadv.kinopoiskfeaturedmovies.feat.util.MainScreen
 import ru.snowadv.kinopoiskfeaturedmovies.feat.util.NavigationEvent
 import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.film.info.FilmInfoScreen
 import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.film.list.SearchFilmScreen
+import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.home.HomeScreen
 import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.theme.KinopoiskFeaturedMoviesTheme
 import javax.inject.Inject
 
@@ -68,11 +69,7 @@ class MainActivity : ComponentActivity() {
             val snackbarHostState = remember { SnackbarHostState() }
             val navController = rememberNavController()
 
-            val scope = rememberCoroutineScope()
-
             val navBackStackEntry = navController.currentBackStackEntryAsState()
-
-            val homeRoutes = remember {MainActivityTab.getMainActivityTabRoutes()}
 
             LaunchedEffect(true) {
                 lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -85,18 +82,19 @@ class MainActivity : ComponentActivity() {
                     }.launchIn(this)
 
                     eventAggregator.navigationChannel.receiveAsFlow().onEach {
-                        when(it) {
-                            is NavigationEvent.ToFeatured, is NavigationEvent.ToPopular -> {
+                        when (it) {
+                            is NavigationEvent.ToHome -> {
                                 navController.navigate(it.route) {
                                     popUpTo(navController.graph.startDestinationRoute!!) {
-                                        inclusive=true
-                                        saveState=true
+                                        inclusive = true
+                                        saveState = true
                                     }
-                                    restoreState=true
-                                    launchSingleTop=true
+                                    restoreState = true
+                                    launchSingleTop = true
                                 }
                             }
-                            is NavigationEvent.ToFilmInfo-> {
+
+                            is NavigationEvent.ToFilmInfo -> {
                                 navController.navigate(it.route)
                             }
                         }
@@ -107,50 +105,27 @@ class MainActivity : ComponentActivity() {
             KinopoiskFeaturedMoviesTheme {
                 // A surface container using the 'background' color from the theme
                 Scaffold(
-                    snackbarHost = { SnackbarHost(snackbarHostState) },
-                    modifier = Modifier.fillMaxSize(),
-                    bottomBar = {
-                        AnimatedVisibility(visible = navBackStackEntry.value?.destination?.route in homeRoutes) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(15.dp),
-                                horizontalArrangement = Arrangement.SpaceAround
-                            ) {
-                                MainActivityTab.entries.forEachIndexed{ index, it ->
-                                    val screen = it.screen
-                                    val event = it.event
-                                    val selected = screen.route == navBackStackEntry.value?.destination?.route
-                                    Button(
-                                        modifier = Modifier
-                                            .height(50.dp)
-                                            .width(150.dp),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
-                                            contentColor = if (selected) Color.White else MaterialTheme.colorScheme.primary
-                                        ),
-                                        onClick = {
-                                            scope.launch {
-                                                eventAggregator.navigationChannel.send(event)
-                                            }
-                                        }
-                                    ) {
-                                        Text(stringResource(screen.titleResId))
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    snackbarHost = {
+                        SnackbarHost(
+                            hostState = snackbarHostState,
+                            modifier = Modifier.let {
+                                if (navBackStackEntry.value?.destination?.route == MainScreen.Home.route) it.padding(
+                                    bottom = 80.dp
+                                ) else it
+                            }.fillMaxWidth()
+                        )
+                    },
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     NavHost(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(it),
                         navController = navController,
-                        startDestination = "popular"
+                        startDestination = MainScreen.Home.route
                     ) {
                         composable(
-                            route = "film?id={id}",
+                            route = MainScreen.FilmInfo.route,
                             arguments = listOf(
                                 navArgument("id") {
                                     type = NavType.StringType
@@ -167,20 +142,9 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        composable(MainScreen.Popular.route) {
-                            SearchFilmScreen(
-                                modifier = Modifier.fillMaxWidth(),
-                                featuredMode = false
-                            )
+                        composable(MainScreen.Home.route) {
+                            HomeScreen(modifier = Modifier.fillMaxWidth())
                         }
-
-                        composable(MainScreen.Featured.route) {
-                            Text(
-                                modifier = Modifier.fillMaxWidth(),
-                                text = "featured"
-                            )
-                        }
-
                     }
                 }
             }
@@ -188,16 +152,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-enum class MainActivityTab(val screen: MainScreen, val event: NavigationEvent) {
-    Popular(MainScreen.Popular, NavigationEvent.ToPopular),
-    Featured(MainScreen.Featured, NavigationEvent.ToFeatured);
 
-    companion object {
-        fun getMainActivityTabRoutes(): List<String> {
-            return MainActivityTab.entries.map { it.screen.route }
-        }
-    }
-}
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {

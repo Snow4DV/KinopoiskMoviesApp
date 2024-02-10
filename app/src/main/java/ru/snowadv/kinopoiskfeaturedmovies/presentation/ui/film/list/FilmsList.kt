@@ -1,5 +1,6 @@
 package ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.film.list
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +23,7 @@ import ru.snowadv.kinopoiskfeaturedmovies.R
 import ru.snowadv.kinopoiskfeaturedmovies.domain.model.Film
 import ru.snowadv.kinopoiskfeaturedmovies.feat.util.SampleData
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FilmsList(
     modifier: Modifier = Modifier,

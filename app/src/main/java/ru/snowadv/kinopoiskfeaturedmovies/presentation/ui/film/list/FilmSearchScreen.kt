@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
@@ -43,7 +44,11 @@ fun SearchFilmScreen(
 
     val state = filmSearchViewModel.state
     LaunchedEffect(true) {
-        filmSearchViewModel.loadNextPage()
+        if (featuredMode) {
+            filmSearchViewModel.collectFavoriteIfDidntCollectPreviously()
+        } else {
+            filmSearchViewModel.loadIfNothingIsLoaded()
+        }
     }
 
     val ctx = LocalContext.current
@@ -56,7 +61,7 @@ fun SearchFilmScreen(
             filmSearchViewModel.openFilm(it.filmId)
         },
         onLongClick = {
-            if(it.filmId in state.value.favoriteFilms) {
+            if (it.filmId in state.value.favoriteFilms) {
                 filmSearchViewModel.removeFilmFromFeatured(it.filmId)
             } else {
                 filmSearchViewModel.addFeatureFilm(it, ctx)
@@ -69,9 +74,12 @@ fun SearchFilmScreen(
         loadMore = {
             filmSearchViewModel.loadNextPage()
         },
-        onRefresh = {
-            filmSearchViewModel.refresh()
-        }
+        onRefresh = if (!featuredMode) {
+            {
+                filmSearchViewModel.refresh()
+            }
+        } else null,
+        featuredMode = featuredMode
     )
 }
 
@@ -88,7 +96,8 @@ fun SearchFilmScreenContent(
     loading: Boolean,
     onRefresh: (() -> Unit)?,
     hasMore: Boolean,
-    loadMore: () -> Unit
+    loadMore: () -> Unit,
+    featuredMode: Boolean
 ) {
     val searchMode = remember { mutableStateOf(false) }
     val textFieldState = remember { mutableStateOf(TextFieldValue()) }
@@ -124,41 +133,51 @@ fun SearchFilmScreenContent(
             )
         },
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it)
-        ) {
-            if (filteredFilms.isNotEmpty()) {
-                FilmsList(
-                    modifier = Modifier.fillMaxSize(),
-                    films = filteredFilms,
-                    favoriteIds = favoriteIds,
-                    onClick = onClick,
-                    onLongClick = onLongClick,
-                    hasMore = hasMore,
-                    loadMore = loadMore
-                )
-            } else {
-                if (loading) {
-                    Box(
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(it)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                if (filteredFilms.isNotEmpty()) {
+                    FilmsList(
                         modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.width(48.dp),
-                            color = MaterialTheme.colorScheme.primary,
-                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                        films = filteredFilms,
+                        favoriteIds = favoriteIds,
+                        onClick = onClick,
+                        onLongClick = onLongClick,
+                        hasMore = hasMore,
+                        loadMore = loadMore
+                    )
+                } else {
+                    if (loading) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.width(48.dp),
+                                color = MaterialTheme.colorScheme.primary,
+                                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                            )
+                        }
+
+                    } else {
+                        ErrorMessageBox(
+                            modifier = Modifier.fillMaxSize(),
+                            errorMessage = errorMessage,
+                            onRefresh = onRefresh
                         )
                     }
-
-                } else {
-                    ErrorMessageBox(
-                        modifier = Modifier.fillMaxSize(),
-                        errorMessage = errorMessage,
-                        onRefresh = onRefresh
-                    )
                 }
+            }
+            if (pullRefreshState != null && !featuredMode) {
+                PullRefreshIndicator(
+                    refreshing = loading && films.isNotEmpty(),
+                    state = pullRefreshState,
+                    modifier = Modifier.align(Alignment.TopCenter)
+                )
             }
         }
     }
@@ -184,7 +203,8 @@ fun SearchFilmScreenPreview() {
                 onRefresh = {},
                 loading = false,
                 hasMore = true,
-                loadMore = {}
+                loadMore = {},
+                featuredMode = false
             )
         }
     }
@@ -211,7 +231,8 @@ fun SearchFilmScreenPreviewEmptyLoading() {
                 onRefresh = {},
                 loading = true,
                 hasMore = true,
-                loadMore = {}
+                loadMore = {},
+                featuredMode = false
             )
         }
     }

@@ -31,12 +31,14 @@ class FilmSearchViewModel @Inject constructor(
     private val eventAggregator: EventAggregator
 ) : ViewModel() {
 
-    private val _state = mutableStateOf(FilmSearchScreenState())
+    private val _state = mutableStateOf(FilmSearchScreenState(loading = false))
     val state: State<FilmSearchScreenState> = _state
     private val stateMutex = Mutex()
 
     private val currentPage = mutableIntStateOf(0)
     private val availablePages = mutableIntStateOf(1)
+
+    private var dataLoaded: Boolean = false
 
     init {
         viewModelScope.launch {
@@ -50,12 +52,41 @@ class FilmSearchViewModel @Inject constructor(
         }
     }
 
-    fun refresh() {
-        currentPage.intValue = 0
-        availablePages.intValue = 1
-        loadNextPage()
+    fun collectFavoriteIfDidntCollectPreviously() {
+        if(!dataLoaded) {
+            dataLoaded = true
+            collectFavorite()
+        }
+    }
+    private fun collectFavorite() {
+        viewModelScope.launch {
+            filmRepository.getFavoriteFilms().onEach {
+                _state.value = state.value.copy(
+                    films = it
+                )
+            }.launchIn(this)
+        }
     }
 
+    fun refresh() {
+        viewModelScope.launch {
+            stateMutex.withLock {
+                _state.value = state.value.copy(
+                    films = emptyList()
+                )
+            }
+            currentPage.intValue = 0
+            availablePages.intValue = 1
+            loadNextPage()
+        }
+    }
+
+    fun loadIfNothingIsLoaded() {
+        if(!dataLoaded) {
+            dataLoaded = true
+            loadNextPage()
+        }
+    }
     fun loadNextPage() {
         if (currentPage.intValue < availablePages.intValue) {
             val beforeLoad = state.value.films
@@ -85,6 +116,8 @@ class FilmSearchViewModel @Inject constructor(
                                 )
                                 if (resource.data != null) {
                                     eventAggregator.eventChannel.send(UiEvent.ShowSnackbar("Мы не смогли подключиться к серверу, так что данные были загружены из памяти."))
+                                } else {
+                                    eventAggregator.eventChannel.send(UiEvent.ShowSnackbar(resource.message ?: "Неожиданная ошибка."))
                                 }
                             }
                         }

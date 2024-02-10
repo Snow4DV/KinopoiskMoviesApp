@@ -15,12 +15,12 @@ data class FilmInfo(
     val nameRu: String?,
     val posterUrl: String?,
     val posterUrlPreview: String?,
-    val ratingKinopoisk: Double,
-    val ratingKinopoiskVoteCount: Int,
-    val reviewsCount: Int,
+    val ratingKinopoisk: Double?,
+    val ratingKinopoiskVoteCount: Int?,
+    val reviewsCount: Int?,
     val shortDescription: String?,
     val slogan: String?,
-    val year: Int
+    val year: Int?
 ) {
     fun toEntity(): FilmInfoEntity {
         return FilmInfoEntity(

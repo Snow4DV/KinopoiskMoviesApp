@@ -289,6 +289,23 @@ fun FilmInfoScreenContent(
                                     )
                                 }
                             }
+                            filmInfo.year?.let { year ->
+                                Row {
+                                    Text(
+                                        text = stringResource(R.string.prod_year),
+                                        fontSize = fontSizeSecondary,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        lineHeight = (fontSizeSecondary.value + 2).sp,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                    Text(
+                                        text = year.toString(),
+                                        fontSize = fontSizeSecondary,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        lineHeight = (fontSizeSecondary.value + 2).sp,
+                                    )
+                                }
+                            }
                         }
                     }
                 }

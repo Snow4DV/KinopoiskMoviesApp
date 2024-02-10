@@ -4,9 +4,9 @@ import ru.snowadv.kinopoiskfeaturedmovies.R
 
 sealed class MainScreen(
     val titleResId: Int,
-    val route: String
+    val route: String,
+    val noArgRoute: String = route
 ) {
-    data object Popular: MainScreen(R.string.popular, "popular")
-    data object Featured: MainScreen(R.string.featured, "featured")
-    data object FilmInfo: MainScreen(R.string.film_info, "film")
+    data object Home: MainScreen(R.string.popular, "home")
+    data object FilmInfo: MainScreen(R.string.film_info, "film?id={id}", "film")
 }
