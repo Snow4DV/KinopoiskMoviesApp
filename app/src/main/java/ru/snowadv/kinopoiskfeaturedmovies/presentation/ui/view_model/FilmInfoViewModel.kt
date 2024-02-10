@@ -20,19 +20,18 @@ import javax.inject.Inject
 @HiltViewModel
 class FilmInfoViewModel @Inject constructor(
     private val filmRepository: FilmRepository,
-    private val eventAggregator: EventAggregator,
-    private val savedStateHandle: SavedStateHandle
+    private val eventAggregator: EventAggregator
 ): ViewModel() {
-    private val filmId = savedStateHandle.get<String?>("id")?.toLongOrNull()
 
     private val _state = mutableStateOf(FilmInfoScreenState())
     val state: State<FilmInfoScreenState> = _state
 
-
-    fun loadData() {
-        filmId?.let { filmId ->
+    fun loadData(filmId: Long?) {
+        _state.value = FilmInfoScreenState()
+        println("load data")
+        filmId?.let { id ->
             viewModelScope.launch(Dispatchers.IO) {
-                filmRepository.getFilmInfo(filmId).onEach {  resource ->
+                filmRepository.getFilmInfo(id).onEach {  resource ->
                     when(resource) {
                         is Resource.Loading, is Resource.Success -> {
                             _state.value = state.value.copy(
@@ -61,5 +60,4 @@ class FilmInfoViewModel @Inject constructor(
             )
         }
     }
-
 }

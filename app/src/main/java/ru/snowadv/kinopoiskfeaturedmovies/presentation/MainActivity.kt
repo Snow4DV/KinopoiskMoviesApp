@@ -1,12 +1,15 @@
 package ru.snowadv.kinopoiskfeaturedmovies.presentation
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,6 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -27,6 +31,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +39,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavType
@@ -57,6 +63,7 @@ import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.film.info.FilmInfoScre
 import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.film.list.SearchFilmScreen
 import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.home.HomeScreen
 import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.theme.KinopoiskFeaturedMoviesTheme
+import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.view_model.FilmInfoViewModel
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -71,12 +78,24 @@ class MainActivity : ComponentActivity() {
 
             val navBackStackEntry = navController.currentBackStackEntryAsState()
 
+            val filmInfoViewModel: FilmInfoViewModel = hiltViewModel()
+
+            val filmInfoIdState = rememberSaveable {mutableStateOf<Long?>(null)}
+
+            val isHorizontal = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+            LaunchedEffect(isHorizontal) {
+                if(isHorizontal && navBackStackEntry.value?.destination?.route?.startsWith(MainScreen.FilmInfo.noArgRoute) == true) {
+                    navController.popBackStack()
+                }
+            }
+
             LaunchedEffect(true) {
                 lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     eventAggregator.eventChannel.receiveAsFlow().onEach {
                         when (it) {
                             is UiEvent.ShowSnackbar -> {
-                                snackbarHostState.showSnackbar(it.message)
+                                snackbarHostState.showSnackbar(message = it.message, duration = SnackbarDuration.Short)
                             }
                         }
                     }.launchIn(this)
@@ -95,12 +114,21 @@ class MainActivity : ComponentActivity() {
                             }
 
                             is NavigationEvent.ToFilmInfo -> {
-                                navController.navigate(it.route)
+                                if(isHorizontal) {
+                                    filmInfoIdState.value = it.id
+                                } else {
+                                    navController.navigate(it.route)
+                                }
                             }
                         }
                     }.launchIn(this)
                 }
             }
+
+            val snackbarPadding =
+                animateDpAsState(targetValue = if (navBackStackEntry.value?.destination?.route == MainScreen.Home.route) 80.dp else 0.dp,
+                    label = "snackbar position animation"
+                )
 
             KinopoiskFeaturedMoviesTheme {
                 // A surface container using the 'background' color from the theme
@@ -108,43 +136,65 @@ class MainActivity : ComponentActivity() {
                     snackbarHost = {
                         SnackbarHost(
                             hostState = snackbarHostState,
-                            modifier = Modifier.let {
-                                if (navBackStackEntry.value?.destination?.route == MainScreen.Home.route) it.padding(
-                                    bottom = 80.dp
-                                ) else it
-                            }.fillMaxWidth()
+                            modifier = Modifier
+                                .padding(bottom = snackbarPadding.value)
+                                .fillMaxWidth()
                         )
                     },
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    NavHost(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(it),
-                        navController = navController,
-                        startDestination = MainScreen.Home.route
-                    ) {
-                        composable(
-                            route = MainScreen.FilmInfo.route,
-                            arguments = listOf(
-                                navArgument("id") {
-                                    type = NavType.StringType
-                                    nullable = true
-                                    defaultValue = null
-                                }
-                            )
+                    Row(modifier = Modifier
+                        .fillMaxSize()
+                        .padding(it)) {
+                        NavHost(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .fillMaxWidth(if (isHorizontal) 0.5f else 1.0f),
+                            navController = navController,
+                            startDestination = MainScreen.Home.route
                         ) {
-                            FilmInfoScreen(
-                                modifier = Modifier.fillMaxSize(),
-                                onBackClick = {
-                                    navController.popBackStack()
-                                }
-                            )
+                            composable(
+                                route = MainScreen.FilmInfo.route,
+                                arguments = listOf(
+                                    navArgument("id") {
+                                        type = NavType.StringType
+                                        nullable = true
+                                        defaultValue = null
+                                    }
+                                )
+                            ) { navBackStackEntry ->
+                                val filmId =
+                                    navBackStackEntry.arguments?.getString("id")?.toLongOrNull()
+                                filmId?.let { id -> filmInfoIdState.value = id }
+                                FilmInfoScreen(
+                                    modifier = Modifier.fillMaxSize(),
+                                    onBackClick = {
+                                        navController.popBackStack()
+                                    },
+                                    filmInfoViewModel = filmInfoViewModel,
+                                    filmId = filmInfoIdState
+                                )
+                            }
+
+                            composable(MainScreen.Home.route) {
+                                HomeScreen(modifier = Modifier.fillMaxWidth())
+                            }
                         }
 
-                        composable(MainScreen.Home.route) {
-                            HomeScreen(modifier = Modifier.fillMaxWidth())
-                        }
+                        FilmInfoScreen(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .fillMaxWidth(if (isHorizontal) 1f else 0f),
+                            onBackClick = {
+                                if(isHorizontal) {
+                                    filmInfoIdState.value = null
+                                } else {
+                                    navController.popBackStack()
+                                }
+                            },
+                            filmInfoViewModel = filmInfoViewModel,
+                            filmId = filmInfoIdState
+                        )
                     }
                 }
             }
