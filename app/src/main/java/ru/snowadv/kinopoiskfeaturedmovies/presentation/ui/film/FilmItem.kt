@@ -1,5 +1,7 @@
-package ru.snowadv.kinopoiskfeaturedmovies.presentation.film
+package ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.film
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +19,7 @@ import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -39,11 +42,14 @@ import ru.snowadv.kinopoiskfeaturedmovies.R
 import ru.snowadv.kinopoiskfeaturedmovies.domain.model.Film
 import ru.snowadv.kinopoiskfeaturedmovies.feat.util.SampleData
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FilmItem(
     modifier: Modifier = Modifier,
     film: Film,
-    favorite: Boolean
+    favorite: Boolean,
+    onClick: (Film) -> Unit = {},
+    onLongClick: (Film) -> Unit = {}
 ) {
     val imageClipShape = remember { RoundedCornerShape(5.dp) }
     val cardClipShape = remember { RoundedCornerShape(15.dp) }
@@ -52,9 +58,14 @@ fun FilmItem(
         ?: stringResource(R.string.no_genre)
     ElevatedCard(
         shape = cardClipShape,
-        modifier = modifier.padding(10.dp),
+        modifier = modifier
+            .padding(8.dp)
+            .combinedClickable(
+                onClick = { onClick(film) },
+                onLongClick = { onLongClick(film) }
+            ),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
+            defaultElevation = 20.dp
         )
     ) {
         Box(
@@ -71,13 +82,13 @@ fun FilmItem(
                     contentDescription = film.nameRu ?: film.nameEn
                     ?: stringResource(R.string.no_name),
                     modifier = Modifier
-                        .width(70.dp)
+                        .width(73.dp)
                         .fillMaxHeight()
                         .padding(11.dp)
                         .clip(shape = imageClipShape),
-                    placeholder = painterResource(id = R.drawable.movie_poster_example),
+                    placeholder = painterResource(id = R.drawable.filmcover),
                 )
-                Spacer(modifier = Modifier.width(3.dp))
+                Spacer(modifier = Modifier.width(5.dp))
                 Column(
                     modifier = Modifier
                         .fillMaxHeight()
@@ -95,7 +106,7 @@ fun FilmItem(
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1
                         )
-                        if(favorite) {
+                        if (favorite) {
                             Icon(
                                 painter = painterResource(id = R.drawable.icon),
                                 contentDescription = stringResource(R.string.feature_film),
@@ -126,9 +137,14 @@ fun FilmItem(
 @Preview
 @Composable
 fun FilmItemPreview() {
-    FilmItem(
-        film = SampleData.hungryGamesFilm,
+    Surface(
         modifier = Modifier.width(420.dp),
-        favorite = true
-    )
+    ) {
+        FilmItem(
+            film = SampleData.hungryGamesFilm,
+            modifier = Modifier.fillMaxWidth(),
+            favorite = true
+        )
+    }
+
 }
