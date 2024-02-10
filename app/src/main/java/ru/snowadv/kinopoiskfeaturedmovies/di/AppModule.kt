@@ -1,7 +1,13 @@
 package ru.snowadv.kinopoiskfeaturedmovies.di
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Room
+import coil.ImageLoader
+import coil.disk.DiskCache
+import coil.memory.MemoryCache
+import coil.request.CachePolicy
+import coil.util.DebugLogger
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
@@ -10,6 +16,7 @@ import com.google.gson.JsonSerializer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -115,6 +122,28 @@ object AppModule {
     @Singleton
     fun provideEventAggregator(): EventAggregator {
         return EventAggregatorImpl()
+    }
+
+    @Provides
+    @Singleton
+    fun provideImageLoader(@ApplicationContext appContext: Context): ImageLoader {
+        return ImageLoader(appContext).newBuilder()
+            .memoryCachePolicy(CachePolicy.ENABLED)
+            .memoryCache {
+                MemoryCache.Builder(appContext)
+                    .maxSizePercent(0.2)
+                    .strongReferencesEnabled(true)
+                    .build()
+            }
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .diskCache {
+                DiskCache.Builder()
+                    .maxSizePercent(0.2)
+                    .directory(appContext.cacheDir)
+                    .build()
+            }
+            .logger(DebugLogger())
+            .build()
     }
 
 }

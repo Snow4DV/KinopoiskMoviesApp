@@ -3,6 +3,7 @@ package ru.snowadv.kinopoiskfeaturedmovies.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -85,12 +88,12 @@ class MainActivity : ComponentActivity() {
                         when(it) {
                             is NavigationEvent.ToFeatured, is NavigationEvent.ToPopular -> {
                                 navController.navigate(it.route) {
-                                    popUpTo(it.route) {
+                                    popUpTo(navController.graph.startDestinationRoute!!) {
                                         inclusive=true
                                         saveState=true
                                     }
-                                    launchSingleTop=true
                                     restoreState=true
+                                    launchSingleTop=true
                                 }
                             }
                             is NavigationEvent.ToFilmInfo-> {
@@ -103,52 +106,11 @@ class MainActivity : ComponentActivity() {
 
             KinopoiskFeaturedMoviesTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(
+                Scaffold(
+                    snackbarHost = { SnackbarHost(snackbarHostState) },
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        NavHost(
-                            modifier = Modifier.weight(1.0f),
-                            navController = navController,
-                            startDestination = "popular"
-                        ) {
-                            composable(
-                                route = "film?id={id}",
-                                arguments = listOf(
-                                    navArgument("id") {
-                                        type = NavType.StringType
-                                        nullable = true
-                                        defaultValue = null
-                                    }
-                                )
-                            ) {
-                                FilmInfoScreen(
-                                    modifier = Modifier.fillMaxSize(),
-                                    onBackClick = {
-                                        navController.popBackStack()
-                                    }
-                                )
-                            }
-
-                            composable(MainScreen.Popular.route) {
-                                SearchFilmScreen(
-                                    modifier = Modifier.weight(1.0f),
-                                    featuredMode = false
-                                )
-                            }
-
-                            composable(MainScreen.Featured.route) {
-                                Text(
-                                    modifier = Modifier.weight(1.0f),
-                                    text = "featured"
-                                )
-                            }
-
-                        }
-                        if(navBackStackEntry.value?.destination?.route in homeRoutes) {
+                    bottomBar = {
+                        AnimatedVisibility(visible = navBackStackEntry.value?.destination?.route in homeRoutes) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -160,7 +122,9 @@ class MainActivity : ComponentActivity() {
                                     val event = it.event
                                     val selected = screen.route == navBackStackEntry.value?.destination?.route
                                     Button(
-                                        modifier = Modifier.height(50.dp).width(150.dp),
+                                        modifier = Modifier
+                                            .height(50.dp)
+                                            .width(150.dp),
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
                                             contentColor = if (selected) Color.White else MaterialTheme.colorScheme.primary
@@ -176,6 +140,47 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
+                    }
+                ) {
+                    NavHost(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(it),
+                        navController = navController,
+                        startDestination = "popular"
+                    ) {
+                        composable(
+                            route = "film?id={id}",
+                            arguments = listOf(
+                                navArgument("id") {
+                                    type = NavType.StringType
+                                    nullable = true
+                                    defaultValue = null
+                                }
+                            )
+                        ) {
+                            FilmInfoScreen(
+                                modifier = Modifier.fillMaxSize(),
+                                onBackClick = {
+                                    navController.popBackStack()
+                                }
+                            )
+                        }
+
+                        composable(MainScreen.Popular.route) {
+                            SearchFilmScreen(
+                                modifier = Modifier.fillMaxWidth(),
+                                featuredMode = false
+                            )
+                        }
+
+                        composable(MainScreen.Featured.route) {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = "featured"
+                            )
+                        }
+
                     }
                 }
             }

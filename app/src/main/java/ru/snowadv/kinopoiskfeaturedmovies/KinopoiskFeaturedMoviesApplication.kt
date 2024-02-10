@@ -8,26 +8,14 @@ import coil.memory.MemoryCache
 import coil.request.CachePolicy
 import coil.util.DebugLogger
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 
 @HiltAndroidApp
 class KinopoiskFeaturedMoviesApplication: Application(), ImageLoaderFactory {
+
+    @Inject
+    lateinit var imageLoader: ImageLoader
     override fun newImageLoader(): ImageLoader {
-        return ImageLoader(this).newBuilder()
-            .memoryCachePolicy(CachePolicy.ENABLED)
-            .memoryCache {
-                MemoryCache.Builder(this)
-                    .maxSizePercent(0.2)
-                    .strongReferencesEnabled(true)
-                    .build()
-            }
-            .diskCachePolicy(CachePolicy.ENABLED)
-            .diskCache {
-                DiskCache.Builder()
-                    .maxSizePercent(0.2)
-                    .directory(cacheDir)
-                    .build()
-            }
-            .logger(DebugLogger())
-            .build()
+        return imageLoader
     }
 }

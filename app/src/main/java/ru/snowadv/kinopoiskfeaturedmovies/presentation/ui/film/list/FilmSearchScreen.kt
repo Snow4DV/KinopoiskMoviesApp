@@ -19,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,7 +46,7 @@ fun SearchFilmScreen(
         filmSearchViewModel.loadNextPage()
     }
 
-    val snackbarText = stringResource(id = R.string.hold_to_feature)
+    val ctx = LocalContext.current
 
     SearchFilmScreenContent(
         modifier = modifier,
@@ -55,7 +56,11 @@ fun SearchFilmScreen(
             filmSearchViewModel.openFilm(it.filmId)
         },
         onLongClick = {
-            // TODO: Feature
+            if(it.filmId in state.value.favoriteFilms) {
+                filmSearchViewModel.removeFilmFromFeatured(it.filmId)
+            } else {
+                filmSearchViewModel.addFeatureFilm(it, ctx)
+            }
         },
         title = stringResource(id = if (featuredMode) R.string.featured else R.string.popular),
         errorMessage = state.value.errorMessage,
