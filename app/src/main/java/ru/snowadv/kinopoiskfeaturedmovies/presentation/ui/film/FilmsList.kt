@@ -34,7 +34,7 @@ fun FilmsList(
             if(index == 0) {
                 Spacer(modifier = Modifier
                     .fillMaxWidth()
-                    .height(15.dp))
+                    .height(13.dp))
             }
             FilmItem(
                 modifier = Modifier

@@ -1,7 +1,9 @@
 package ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.film
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,9 +18,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -56,7 +61,7 @@ fun FilmItem(
 
     val genre = film.genres.firstOrNull()?.replaceFirstChar { it.uppercaseChar() }
         ?: stringResource(R.string.no_genre)
-    ElevatedCard(
+    Card(
         shape = cardClipShape,
         modifier = modifier
             .padding(8.dp)
@@ -66,6 +71,9 @@ fun FilmItem(
             ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 20.dp
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         Box(

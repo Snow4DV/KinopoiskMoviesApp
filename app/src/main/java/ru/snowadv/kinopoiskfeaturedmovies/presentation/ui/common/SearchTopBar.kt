@@ -25,11 +25,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.nativeKeyCode
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,15 +48,17 @@ fun SearchTopBar(
     searchMode: Boolean,
     title: String,
     onSwitchMode: (Boolean) -> Unit,
-    textFieldValue: String,
-    onValueChange: (String) -> Unit
+    textFieldValue: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit
 ) {
+
     val focusRequester = remember { FocusRequester() }
     val interactionSource = remember { MutableInteractionSource() }
 
     LaunchedEffect(searchMode) {
         if(searchMode) {
             focusRequester.requestFocus()
+            onValueChange(textFieldValue.copy(selection = TextRange(textFieldValue.text.length)))
         }
     }
 
@@ -72,14 +79,23 @@ fun SearchTopBar(
                 tint = colorResource(id = R.color.primary)
             )
             BasicTextField(
-                textStyle = TextStyle.Default.copy(fontSize = 24.sp),
-                modifier = Modifier.focusRequester(focusRequester),
+                textStyle = TextStyle.Default.copy(fontSize = 26.sp),
+                modifier = Modifier.focusRequester(focusRequester)
+                    .onKeyEvent { event ->
+                        if (event.key.nativeKeyCode == android.view.KeyEvent.KEYCODE_BACK) {
+                            onSwitchMode(false)
+                            true
+                        } else {
+                            false
+                        }
+                    },
                 value = textFieldValue,
                 onValueChange = onValueChange,
                 interactionSource = interactionSource,
+                maxLines = 1,
                 decorationBox = {
                     TextFieldDecorationBox(
-                        value = textFieldValue,
+                        value = textFieldValue.text,
                         innerTextField = it,
                         enabled = true,
                         singleLine = true,
@@ -89,7 +105,7 @@ fun SearchTopBar(
                         placeholder = {
                             Text(
                                 color = Color.Gray,
-                                fontSize = 24.sp,
+                                fontSize = 25.sp,
                                 text = stringResource(id = R.string.search)
                             )
                         }
@@ -126,7 +142,7 @@ fun SearchTopBarPreviewWithTitle() {
         searchMode = false,
         onSwitchMode = {},
         title = "Популярные",
-        textFieldValue = "123",
+        textFieldValue = TextFieldValue(),
         onValueChange = {}
     )
 }
@@ -139,7 +155,7 @@ fun SearchTopBarPreviewWithSearchBar() {
         searchMode = true,
         onSwitchMode = {},
         title = "Популярные",
-        textFieldValue = "Фильм",
+        textFieldValue = TextFieldValue("Фильм"),
         onValueChange = {}
     )
 }
@@ -152,7 +168,7 @@ fun SearchTopBarPreviewWithSearchBarEmpty() {
         searchMode = true,
         onSwitchMode = {},
         title = "Популярные",
-        textFieldValue = "",
+        textFieldValue = TextFieldValue(),
         onValueChange = {}
     )
 }

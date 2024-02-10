@@ -2,13 +2,13 @@ package ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+val Blue100 = Color(0xFFb3dfff)
+val BLueGrey100 = Color(0xFFbfd5ff)
+val Blue700 = Color(0xFFa6c3ff)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+val Blue40 = Color(0xFF01539d)
+val BlueGrey40 = Color(0xFF215174)
+val LightBlue40 = Color(0xFF4999ff)
 
 val TiBlue = Color(0xFF0094FF)
 val TiLightBlue = Color(0xFFDEEFFF)
