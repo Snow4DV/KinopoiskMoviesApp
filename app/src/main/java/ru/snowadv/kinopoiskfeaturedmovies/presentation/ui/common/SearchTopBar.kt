@@ -56,7 +56,7 @@ fun SearchTopBar(
     val interactionSource = remember { MutableInteractionSource() }
 
     LaunchedEffect(searchMode) {
-        if(searchMode) {
+        if (searchMode) {
             focusRequester.requestFocus()
             onValueChange(textFieldValue.copy(selection = TextRange(textFieldValue.text.length)))
         }
@@ -68,22 +68,27 @@ fun SearchTopBar(
             .padding(top = 5.dp),
         verticalAlignment = Alignment.Bottom
     ) {
-        if(searchMode) {
+        if (searchMode) {
             Icon(
                 modifier = Modifier
                     .height(with(LocalDensity.current) { 29.sp.toDp() })
                     .padding(end = 8.dp)
-                    .clickable(onClick = {onSwitchMode(false)}),
+                    .clickable(onClick = {
+                        onSwitchMode(false)
+                        onValueChange(TextFieldValue(""))
+                    }),
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = stringResource(R.string.search),
                 tint = colorResource(id = R.color.primary)
             )
             BasicTextField(
                 textStyle = TextStyle.Default.copy(fontSize = 26.sp),
-                modifier = Modifier.focusRequester(focusRequester)
+                modifier = Modifier
+                    .focusRequester(focusRequester)
                     .onKeyEvent { event ->
                         if (event.key.nativeKeyCode == android.view.KeyEvent.KEYCODE_BACK) {
                             onSwitchMode(false)
+                            onValueChange(TextFieldValue(""))
                             true
                         } else {
                             false
@@ -125,7 +130,7 @@ fun SearchTopBar(
             Icon(
                 modifier = Modifier
                     .height(with(LocalDensity.current) { 29.sp.toDp() })
-                    .clickable(onClick = {onSwitchMode(true)}),
+                    .clickable(onClick = { onSwitchMode(true) }),
                 imageVector = Icons.Filled.Search,
                 contentDescription = stringResource(R.string.search),
                 tint = colorResource(id = R.color.primary)

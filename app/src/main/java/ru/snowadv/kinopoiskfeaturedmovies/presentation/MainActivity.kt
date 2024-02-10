@@ -75,18 +75,20 @@ class MainActivity : ComponentActivity() {
         setContent {
             val snackbarHostState = remember { SnackbarHostState() }
             val navController = rememberNavController()
-
             val navBackStackEntry = navController.currentBackStackEntryAsState()
-
             val filmInfoViewModel: FilmInfoViewModel = hiltViewModel()
-
             val filmInfoIdState = rememberSaveable {mutableStateOf<Long?>(null)}
-
             val isHorizontal = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+            val coroutineScope = rememberCoroutineScope()
+
 
             LaunchedEffect(isHorizontal) {
                 if(isHorizontal && navBackStackEntry.value?.destination?.route?.startsWith(MainScreen.FilmInfo.noArgRoute) == true) {
                     navController.popBackStack()
+                } else if(!isHorizontal && filmInfoIdState.value != null) {
+                    coroutineScope.launch {
+                        //eventAggregator.navigationChannel.send(NavigationEvent.ToFilmInfo(filmInfoIdState.value))
+                    }
                 }
             }
 
@@ -170,6 +172,7 @@ class MainActivity : ComponentActivity() {
                                     modifier = Modifier.fillMaxSize(),
                                     onBackClick = {
                                         navController.popBackStack()
+                                        filmInfoIdState.value = null
                                     },
                                     filmInfoViewModel = filmInfoViewModel,
                                     filmId = filmInfoIdState

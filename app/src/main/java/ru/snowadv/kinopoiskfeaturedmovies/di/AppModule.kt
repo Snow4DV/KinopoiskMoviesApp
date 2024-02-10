@@ -84,7 +84,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAuthenticator(): HeaderAuthenticator {
-        return HeaderAuthenticator("41829cfe-3cbc-45d0-a240-9fa11f5e37be")
+        return HeaderAuthenticator("11d6125b-058b-4ac1-bc2d-56b48af655bb")
     }
 
     @Provides
