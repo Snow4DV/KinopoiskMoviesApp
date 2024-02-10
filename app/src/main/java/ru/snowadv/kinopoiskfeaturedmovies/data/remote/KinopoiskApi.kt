@@ -7,8 +7,8 @@ import ru.snowadv.kinopoiskfeaturedmovies.data.remote.dto.FilmInfoDto
 import ru.snowadv.kinopoiskfeaturedmovies.data.remote.dto.FilmsDto
 
 interface KinopoiskApi {
-    @GET("/api/v2.2/films/top/?type=TOP_100_POPULAR_FILMS")
-    suspend fun getFilms(@Query("page") page: Int = 1): FilmsDto
+    @GET("/api/v2.2/films/top")
+    suspend fun getFilms(@Query("page") page: Int = 1, @Query("type") type: String = "TOP_100_POPULAR_FILMS"): FilmsDto
 
     @GET("/api/v2.2/films/{id}")
     suspend fun getFilmInfo(@Path("id") id: Long): FilmInfoDto

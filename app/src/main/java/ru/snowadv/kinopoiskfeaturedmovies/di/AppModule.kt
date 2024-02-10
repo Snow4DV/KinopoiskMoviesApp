@@ -15,6 +15,8 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import ru.snowadv.comapr.presentation.EventAggregator
+import ru.snowadv.comapr.presentation.EventAggregatorImpl
 import ru.snowadv.kinopoiskfeaturedmovies.data.converter.DatabaseTypeConverter
 import ru.snowadv.kinopoiskfeaturedmovies.data.converter.JsonConverter
 import ru.snowadv.kinopoiskfeaturedmovies.data.converter.JsonConverterImpl
@@ -107,6 +109,12 @@ object AppModule {
             .addConverterFactory(factory)
             .build()
             .create(KinopoiskApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideEventAggregator(): EventAggregator {
+        return EventAggregatorImpl()
     }
 
 }

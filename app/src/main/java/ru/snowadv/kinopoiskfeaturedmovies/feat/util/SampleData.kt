@@ -1,6 +1,7 @@
 package ru.snowadv.kinopoiskfeaturedmovies.feat.util
 
 import ru.snowadv.kinopoiskfeaturedmovies.domain.model.Film
+import ru.snowadv.kinopoiskfeaturedmovies.domain.model.FilmInfo
 
 object SampleData {
     val hungryGamesFilm = Film(
@@ -48,4 +49,25 @@ object SampleData {
     )
 
     val films = listOf(hungryGamesFilm, gentlemenFilm, interstellarFilm)
+
+    val filmInfo = FilmInfo(
+        kinopoiskId = 111,
+        countries = listOf("USA"),
+        coverUrl = "https://avatars.mds.yandex.net/get-ott/1648503/2a00000170a5418408119bc802b53a03007b/orig",
+        description = "Жизнь Томаса Андерсона разделена на две части: днём он — самый обычный офисный работник, получающий нагоняи от начальства, а ночью превращается в хакера по имени Нео, и нет места в сети, куда он бы не смог проникнуть. Но однажды всё меняется. Томас узнаёт ужасающую правду о реальности.",
+        filmLength = 136,
+        genres = listOf("фантастика", "боевик"),
+        logoUrl = "https://avatars.mds.yandex.net/get-ott/1648503/2a00000170a5418408119bc802b53a03007b/orig",
+        nameEn = "The Matrix",
+        nameOriginal = "The Matrix",
+        nameRu = "Матрица",
+        posterUrl = "https://kinopoiskapiunofficial.tech/images/posters/kp/301.jpg",
+        posterUrlPreview = "https://kinopoiskapiunofficial.tech/images/posters/kp_small/301.jpg",
+        ratingKinopoisk = 8.7,
+        ratingKinopoiskVoteCount = 100000,
+        reviewsCount = 500,
+        shortDescription = "Хакер Нео узнает, что его мир — виртуальный. Выдающийся экшен, доказавший, что зрелищное кино может быть умным",
+        slogan = "Добро пожаловать в реальный мир",
+        year = 1999
+    )
 }

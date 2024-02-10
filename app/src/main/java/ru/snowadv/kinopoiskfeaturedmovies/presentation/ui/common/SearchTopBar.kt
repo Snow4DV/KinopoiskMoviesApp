@@ -64,7 +64,7 @@ fun SearchTopBar(
 
     Row(
         modifier = modifier
-            .padding(top = 20.dp, start = 20.dp, end = 20.dp, bottom = 0.dp)
+            .padding(top = 20.dp, start = 20.dp, end = 20.dp, bottom = 10.dp)
             .padding(top = 5.dp),
         verticalAlignment = Alignment.Bottom
     ) {

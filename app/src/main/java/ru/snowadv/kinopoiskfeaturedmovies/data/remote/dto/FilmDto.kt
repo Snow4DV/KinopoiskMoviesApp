@@ -14,7 +14,7 @@ data class FilmDto(
     val posterUrlPreview: String,
     val rating: String,
     val ratingVoteCount: Int,
-    val year: String
+    val year: String?
 ) {
     fun toModel() : Film {
         return Film(

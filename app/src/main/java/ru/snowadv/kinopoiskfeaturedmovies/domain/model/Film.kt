@@ -11,9 +11,9 @@ data class Film(
     val nameRu: String?,
     val posterUrl: String?,
     val posterUrlPreview: String?,
-    val rating: String,
-    val ratingVoteCount: Int,
-    val year: String
+    val rating: String?,
+    val ratingVoteCount: Int?,
+    val year: String?
 ) {
     fun toFavEntity(): FavoriteFilmEntity {
         return FavoriteFilmEntity(

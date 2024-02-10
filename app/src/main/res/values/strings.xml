@@ -8,4 +8,17 @@
     <string name="retry">Повторить</string>
     <string name="no_connection">Нет подключения</string>
     <string name="loading_error">Произошла ошибка при загрузке данных, проверьте подключение к сети</string>
+    <string name="back">Назад</string>
+    <string name="no_description">Нет описания</string>
+    <string name="genres">"Жанры: "</string>
+    <string name="genre">"Жанр: "</string>
+    <string name="country">"Страна: "</string>
+    <string name="countries">"Страны: "</string>
+    <string name="choose_film">Выберите фильм</string>
+    <string name="popular">Популярные</string>
+    <string name="featured">Избранное</string>
+    <string name="film_info">Информация о фильме</string>
+    <string name="load_more">Загрузить ещё</string>
+    <string name="hold_to_feature">Удерживайте карточку, чтобы добавить в избранное</string>
+    <string name="no_year">Без года</string>
 </resources>

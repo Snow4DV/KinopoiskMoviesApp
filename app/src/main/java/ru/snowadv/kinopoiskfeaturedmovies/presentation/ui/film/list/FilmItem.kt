@@ -1,9 +1,7 @@
-package ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.film
+package ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.film.list
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,15 +11,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -32,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
@@ -94,7 +88,7 @@ fun FilmItem(
                         .fillMaxHeight()
                         .padding(11.dp)
                         .clip(shape = imageClipShape),
-                    placeholder = painterResource(id = R.drawable.filmcover),
+                    placeholder = ColorPainter(Color.LightGray),
                 )
                 Spacer(modifier = Modifier.width(5.dp))
                 Column(
@@ -131,7 +125,7 @@ fun FilmItem(
                         fontSize = 14.sp,
                         color = Color.Gray,
                         fontWeight = FontWeight.SemiBold,
-                        text = "$genre (${film.year})",
+                        text = "$genre (${film.year ?: stringResource(R.string.no_year)})",
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )

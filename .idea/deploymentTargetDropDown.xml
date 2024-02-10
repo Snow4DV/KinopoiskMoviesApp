@@ -2,10 +2,13 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="FilmsListPreview">
+      <entry key="FilmInfoScreenContentPreview">
         <State />
       </entry>
       <entry key="SearchFilmScreenPreview">
+        <State />
+      </entry>
+      <entry key="SearchFilmScreenPreviewEmptyLoading">
         <State />
       </entry>
       <entry key="SearchTopBarPreviewWithSearchBar">
