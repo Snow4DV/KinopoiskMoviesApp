@@ -133,9 +133,11 @@ fun SearchFilmScreenContent(
             )
         },
     ) {
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(it)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -154,7 +156,7 @@ fun SearchFilmScreenContent(
                     if (loading) {
                         FilmsList(
                             modifier = Modifier.fillMaxSize(),
-                            films = List(20) {null},
+                            films = List(20) { null },
                             favoriteIds = emptySet(),
                             onClick = {},
                             onLongClick = {},
@@ -166,7 +168,8 @@ fun SearchFilmScreenContent(
                         ErrorMessageBox(
                             modifier = Modifier.fillMaxSize(),
                             errorMessage = errorMessage,
-                            onRefresh = onRefresh
+                            onRefresh = onRefresh,
+                            defaultStringResId = if (filteredFilms.isEmpty() && films.isNotEmpty()) R.string.not_found else R.string.empty_over_there
                         )
                     }
                 }
@@ -175,7 +178,9 @@ fun SearchFilmScreenContent(
                 PullRefreshIndicator(
                     refreshing = loading && films.isNotEmpty(),
                     state = pullRefreshState,
-                    modifier = Modifier.align(Alignment.TopCenter)
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    contentColor = MaterialTheme.colorScheme.primary,
+                    backgroundColor = MaterialTheme.colorScheme.surface
                 )
             }
         }

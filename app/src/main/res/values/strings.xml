@@ -22,4 +22,5 @@
     <string name="hold_to_feature">Удерживайте карточку, чтобы добавить в избранное</string>
     <string name="no_year">Без года</string>
     <string name="prod_year">"Год производства: "</string>
+    <string name="empty_over_there">Тут пока пусто</string>
 </resources>

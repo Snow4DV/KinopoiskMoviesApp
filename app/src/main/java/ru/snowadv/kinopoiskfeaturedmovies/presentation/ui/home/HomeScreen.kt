@@ -2,6 +2,7 @@ package ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -55,7 +56,7 @@ fun HomeScreen(
                             .width(150.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
-                            contentColor = if (selected) Color.White else MaterialTheme.colorScheme.primary
+                            contentColor = if (selected) Color.White else (if(isSystemInDarkTheme()) Color.White else MaterialTheme.colorScheme.primary)
                         ),
                         onClick = {
                             coroutineScope.launch {
