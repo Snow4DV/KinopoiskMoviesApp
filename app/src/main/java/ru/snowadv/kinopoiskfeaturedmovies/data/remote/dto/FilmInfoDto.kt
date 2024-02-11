@@ -15,7 +15,7 @@ data class FilmInfoDto(
     val nameRu: String?,
     val posterUrl: String?,
     val posterUrlPreview: String?,
-    val ratingKinopoisk: Double,
+    val ratingKinopoisk: Double?,
     val ratingKinopoiskVoteCount: Int,
     val reviewsCount: Int,
     val shortDescription: String?,

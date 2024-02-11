@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import ru.snowadv.comapr.presentation.EventAggregator
+import ru.snowadv.kinopoiskfeaturedmovies.presentation.event.EventAggregator
 import ru.snowadv.kinopoiskfeaturedmovies.domain.model.Film
 import ru.snowadv.kinopoiskfeaturedmovies.domain.repository.FilmRepository
 import ru.snowadv.kinopoiskfeaturedmovies.feat.util.NavigationEvent

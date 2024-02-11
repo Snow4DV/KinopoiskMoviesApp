@@ -1,23 +1,13 @@
-package ru.snowadv.kinopoiskfeaturedmovies
+package ru.snowadv.kinopoiskfeaturedmovies.data
 
-import android.content.Context
-import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import dagger.Module
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
-import dagger.hilt.components.SingletonComponent
-import dagger.hilt.testing.TestInstallIn
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 
 import org.junit.Test
-import org.junit.runner.RunWith
 
 import org.junit.Assert.*
 import org.junit.Before
@@ -35,7 +25,7 @@ import javax.inject.Inject
 
 @HiltAndroidTest
 @UninstallModules(AppModule::class)
-class FilmsDaoTest {
+class FilmDatabaseTest {
 
     @get:Rule
     var hiltRule = HiltAndroidRule(this)
@@ -47,10 +37,12 @@ class FilmsDaoTest {
     @Inject
     lateinit var dao: FilmsDao
 
-
-    private lateinit var favoriteFilmEntity: FavoriteFilmEntity
-    private lateinit var filmInfoEntity: FilmInfoEntity
-    private lateinit var film: Film
+    @Inject
+    lateinit var favoriteFilmEntity: FavoriteFilmEntity
+    @Inject
+    lateinit var filmInfoEntity: FilmInfoEntity
+    @Inject
+    lateinit var film: Film
 
     @Inject
     lateinit var typeConverter: DatabaseTypeConverter
@@ -58,40 +50,6 @@ class FilmsDaoTest {
     @Before
     fun setup() {
         hiltRule.inject()
-        favoriteFilmEntity = FavoriteFilmEntity(
-            countries = listOf("Канада", "США"),
-            filmId = 1,
-            filmLength = "01:23",
-            genres = listOf("комедия", "триллер"),
-            nameEn = "Film 1",
-            nameRu = "Фильм 1",
-            posterUrl = "http://example.com/img.jps",
-            posterUrlPreview = "http://example.com/smol.jpg",
-            rating = "8.5",
-            ratingVoteCount = 1000,
-            year = "2021"
-        )
-        filmInfoEntity = FilmInfoEntity(kinopoiskId = 1234, countries = listOf("Country"), coverUrl =
-            "coverUrl", description = "description", filmLength = 120, genres = listOf("Genre"), logoUrl = "logoUrl",
-                    nameEn = "NameEn", nameOriginal = "NameOriginal", nameRu = "NameRu", posterUrl = "posterUrl",
-            posterUrlPreview = "posterUrlPreview", ratingKinopoisk = 7.5, ratingKinopoiskVoteCount = 100,
-            reviewsCount = 10, shortDescription = "shortDescription", slogan = "slogan", year = 2021)
-
-
-        film = Film(
-            countries = listOf("USA"),
-            filmId = 1,
-            filmLength = "136",
-            genres = listOf("Action", "Sci-Fi"),
-            nameEn = "The Matrix",
-            nameRu = "Матрица",
-            posterUrl = "https://example.com/poster.jpg",
-            posterUrlPreview = "https://example.com/poster_preview.jpg",
-            rating = "8.7",
-            ratingVoteCount = 1500,
-            year = "1999"
-        )
-
     }
 
     @After

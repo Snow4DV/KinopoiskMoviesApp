@@ -1,4 +1,4 @@
-package ru.snowadv.comapr.presentation
+package ru.snowadv.kinopoiskfeaturedmovies.presentation.event
 
 import kotlinx.coroutines.channels.Channel
 import ru.snowadv.kinopoiskfeaturedmovies.feat.util.NavigationEvent

@@ -9,10 +9,6 @@ import coil.memory.MemoryCache
 import coil.request.CachePolicy
 import coil.util.DebugLogger
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonPrimitive
-import com.google.gson.JsonSerializer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,8 +18,8 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import ru.snowadv.comapr.presentation.EventAggregator
-import ru.snowadv.comapr.presentation.EventAggregatorImpl
+import ru.snowadv.kinopoiskfeaturedmovies.presentation.event.EventAggregator
+import ru.snowadv.kinopoiskfeaturedmovies.presentation.event.EventAggregatorImpl
 import ru.snowadv.kinopoiskfeaturedmovies.data.converter.DatabaseTypeConverter
 import ru.snowadv.kinopoiskfeaturedmovies.data.converter.JsonConverter
 import ru.snowadv.kinopoiskfeaturedmovies.data.converter.JsonConverterImpl
@@ -33,8 +29,6 @@ import ru.snowadv.kinopoiskfeaturedmovies.data.remote.HeaderAuthenticator
 import ru.snowadv.kinopoiskfeaturedmovies.data.remote.KinopoiskApi
 import ru.snowadv.kinopoiskfeaturedmovies.data.repository.FilmRepositoryImpl
 import ru.snowadv.kinopoiskfeaturedmovies.domain.repository.FilmRepository
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 

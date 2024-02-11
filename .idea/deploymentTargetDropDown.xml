@@ -2,22 +2,19 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="FilmInfoScreenContentPreview">
+      <entry key="FilmRepositoryImplTest">
         <State />
       </entry>
-      <entry key="FilmsDaoTest">
-        <State />
-      </entry>
-      <entry key="SearchFilmScreenPreview">
-        <State />
-      </entry>
-      <entry key="SearchFilmScreenPreviewEmptyLoading">
-        <State />
-      </entry>
-      <entry key="SearchTopBarPreviewWithSearchBar">
+      <entry key="addFilmsAndGetIdSet()">
         <State />
       </entry>
       <entry key="app">
+        <State />
+      </entry>
+      <entry key="removeFavoriteFilmFromRoomDb()">
+        <State />
+      </entry>
+      <entry key="removeFilmsAndCheckIfIdsAreAbsent()">
         <State />
       </entry>
     </value>
