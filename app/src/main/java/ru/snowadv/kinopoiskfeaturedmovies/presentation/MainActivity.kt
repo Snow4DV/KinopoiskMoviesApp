@@ -80,8 +80,9 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val navBackStackEntry = navController.currentBackStackEntryAsState()
             val filmInfoViewModel: FilmInfoViewModel = hiltViewModel()
-            val filmInfoIdState = rememberSaveable {mutableStateOf<Long?>(null)}
-            val isHorizontal = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+            val filmInfoIdState = rememberSaveable { mutableStateOf<Long?>(null) }
+            val isHorizontal =
+                LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
             val coroutineScope = rememberCoroutineScope()
 
             BackHandler(
@@ -90,14 +91,30 @@ class MainActivity : ComponentActivity() {
                 filmInfoIdState.value = null
             }
 
-            Log.d("TAG", "onCreate: film id is ${filmInfoIdState.value}")
+            val showFilmInfo = isHorizontal && filmInfoIdState.value != null
+
+            val animateNavHostWidth = animateFloatAsState(
+                targetValue = if (showFilmInfo) 0.5f else 1f,
+                label = "nav host width animation"
+            )
+            val animateFilmInfoWidth = animateFloatAsState(
+                targetValue = if (showFilmInfo) 1f else 0f,
+                label = "nav host width animation"
+            )
 
             LaunchedEffect(isHorizontal) {
-                if(isHorizontal && navBackStackEntry.value?.destination?.route?.startsWith(MainScreen.FilmInfo.noArgRoute) == true) {
+                if (isHorizontal && navBackStackEntry.value?.destination?.route?.startsWith(
+                        MainScreen.FilmInfo.noArgRoute
+                    ) == true
+                ) {
                     navController.popBackStack()
-                } else if(!isHorizontal && filmInfoIdState.value != null) {
+                } else if (!isHorizontal && filmInfoIdState.value != null) {
                     coroutineScope.launch {
-                        eventAggregator.navigationChannel.send(NavigationEvent.ToFilmInfo(filmInfoIdState.value))
+                        eventAggregator.navigationChannel.send(
+                            NavigationEvent.ToFilmInfo(
+                                filmInfoIdState.value
+                            )
+                        )
                     }
                 }
             }
@@ -107,7 +124,10 @@ class MainActivity : ComponentActivity() {
                     eventAggregator.eventChannel.receiveAsFlow().onEach {
                         when (it) {
                             is UiEvent.ShowSnackbar -> {
-                                snackbarHostState.showSnackbar(message = it.message, duration = SnackbarDuration.Short)
+                                snackbarHostState.showSnackbar(
+                                    message = it.message,
+                                    duration = SnackbarDuration.Short
+                                )
                             }
                         }
                     }.launchIn(this)
@@ -126,7 +146,7 @@ class MainActivity : ComponentActivity() {
                             }
 
                             is NavigationEvent.ToFilmInfo -> {
-                                if(isHorizontal) {
+                                if (isHorizontal) {
                                     filmInfoIdState.value = it.id
                                 } else {
                                     navController.navigate(it.route)
@@ -138,7 +158,8 @@ class MainActivity : ComponentActivity() {
             }
 
             val snackbarPadding =
-                animateDpAsState(targetValue = if (navBackStackEntry.value?.destination?.route == MainScreen.Home.route) 80.dp else 0.dp,
+                animateDpAsState(
+                    targetValue = if (navBackStackEntry.value?.destination?.route == MainScreen.Home.route) 80.dp else 0.dp,
                     label = "snackbar position animation"
                 )
 
@@ -155,13 +176,15 @@ class MainActivity : ComponentActivity() {
                     },
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    Row(modifier = Modifier
-                        .fillMaxSize()
-                        .padding(it)) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(it)
+                    ) {
                         NavHost(
                             modifier = Modifier
                                 .fillMaxHeight()
-                                .fillMaxWidth(if (isHorizontal) 0.5f else 1f),
+                                .fillMaxWidth(animateNavHostWidth.value),
                             navController = navController,
                             startDestination = MainScreen.Home.route
                         ) {
@@ -178,7 +201,7 @@ class MainActivity : ComponentActivity() {
                                 val filmId =
                                     navBackStackEntry.arguments?.getString("id")?.toLongOrNull()
                                 LaunchedEffect(filmId) {
-                                    if(!isHorizontal && filmId != null) {
+                                    if (!isHorizontal && filmId != null) {
                                         filmInfoIdState.value = filmId
                                     }
                                 }
@@ -187,7 +210,10 @@ class MainActivity : ComponentActivity() {
                                     onBackClick = {
                                         navController.popBackStack()
                                         filmInfoIdState.value = null
-                                        Log.d("TAG", "onCreate: erased filmInfoID state ; w now is ${filmInfoIdState.value}")
+                                        Log.d(
+                                            "TAG",
+                                            "onCreate: erased filmInfoID state ; w now is ${filmInfoIdState.value}"
+                                        )
                                     },
                                     filmInfoViewModel = filmInfoViewModel,
                                     filmId = filmInfoIdState
@@ -199,18 +225,16 @@ class MainActivity : ComponentActivity() {
                             }
                         }
 
-                        if(isHorizontal) {
-                            FilmInfoScreen(
-                                modifier = Modifier
-                                    .fillMaxHeight()
-                                    .weight(1f),
-                                onBackClick = {
-                                    filmInfoIdState.value = null
-                                },
-                                filmInfoViewModel = filmInfoViewModel,
-                                filmId = filmInfoIdState
-                            )
-                        }
+                        FilmInfoScreen(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .fillMaxWidth(animateFilmInfoWidth.value),
+                            onBackClick = {
+                                filmInfoIdState.value = null
+                            },
+                            filmInfoViewModel = filmInfoViewModel,
+                            filmId = filmInfoIdState
+                        )
                     }
                 }
             }

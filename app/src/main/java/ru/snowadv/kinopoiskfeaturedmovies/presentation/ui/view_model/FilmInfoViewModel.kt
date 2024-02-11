@@ -27,37 +27,29 @@ class FilmInfoViewModel @Inject constructor(
     val state: State<FilmInfoScreenState> = _state
 
     fun loadData(filmId: Long?) {
-        _state.value = FilmInfoScreenState()
-        println("load data")
-        filmId?.let { id ->
-            viewModelScope.launch(Dispatchers.IO) {
-                filmRepository.getFilmInfo(id).onEach {  resource ->
-                    when(resource) {
-                        is Resource.Loading, is Resource.Success -> {
-                            _state.value = state.value.copy(
-                                loading = resource is Resource.Loading,
-                                error = null,
-                                film = resource.data ?: state.value.film
-                            )
-                        }
-                        is Resource.Error -> {
-                            _state.value = state.value.copy(
-                                loading = false,
-                                error = resource.message,
-                                film = resource.data ?: state.value.film
-                            )
-                            if(resource.data != null) {
-                                eventAggregator.eventChannel.send(UiEvent.ShowSnackbar("Сервер недоступен. Данные были загружены из кэша."))
-                            }
+        if(filmId == null) return
+        viewModelScope.launch(Dispatchers.IO) {
+            filmRepository.getFilmInfo(filmId).onEach {  resource ->
+                when(resource) {
+                    is Resource.Loading, is Resource.Success -> {
+                        _state.value = state.value.copy(
+                            loading = resource is Resource.Loading,
+                            error = null,
+                            film = resource.data ?: state.value.film
+                        )
+                    }
+                    is Resource.Error -> {
+                        _state.value = state.value.copy(
+                            loading = false,
+                            error = resource.message,
+                            film = resource.data ?: state.value.film
+                        )
+                        if(resource.data != null) {
+                            eventAggregator.eventChannel.send(UiEvent.ShowSnackbar("Сервер недоступен. Данные были загружены из кэша."))
                         }
                     }
-                }.launchIn(this)
-            }
-        } ?: run {
-            _state.value = _state.value.copy(
-                loading = false,
-                error = null
-            )
+                }
+            }.launchIn(this)
         }
     }
 }

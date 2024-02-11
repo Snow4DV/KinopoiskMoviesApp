@@ -16,6 +16,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -26,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.nativeKeyCode
 import androidx.compose.ui.input.key.onKeyEvent
@@ -83,7 +85,7 @@ fun SearchTopBar(
                 tint = colorResource(id = R.color.primary)
             )
             BasicTextField(
-                textStyle = TextStyle.Default.copy(fontSize = 26.sp),
+                textStyle = TextStyle.Default.copy(fontSize = 26.sp, color = MaterialTheme.colorScheme.onSurface),
                 modifier = Modifier
                     .focusRequester(focusRequester)
                     .onKeyEvent { event ->
@@ -95,6 +97,7 @@ fun SearchTopBar(
                             false
                         }
                     },
+                cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
                 value = textFieldValue,
                 onValueChange = onValueChange,
                 interactionSource = interactionSource,

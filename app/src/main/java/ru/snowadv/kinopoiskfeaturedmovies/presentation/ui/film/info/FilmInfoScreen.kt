@@ -22,12 +22,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -111,6 +113,20 @@ fun FilmInfoScreen(
                     } else null,
                     defaultStringResId = R.string.choose_film
                 )
+                if(filmId.value != null) {
+                    Icon(
+                        modifier = with(LocalDensity.current) {
+                            Modifier
+                                .height(29.sp.toDp() + 22.dp)
+                                .width(29.sp.toDp() + 10.dp)
+                                .padding(top = 22.dp, start = 10.dp)
+                                .clickable(onClick = onBackClick)
+                        },
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.back),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
         }
         if (state.loading) {
@@ -138,7 +154,7 @@ fun FilmInfoScreenContent(
 ) {
     val configuration = LocalConfiguration.current
 
-    val iconPaddingTop = 15.dp
+    val iconPaddingTop = 22.dp
     val iconPaddingStart = 10.dp
 
     val minBarAndImageHeight = with(LocalDensity.current) { 29.sp.toDp() + iconPaddingTop * 2 }
