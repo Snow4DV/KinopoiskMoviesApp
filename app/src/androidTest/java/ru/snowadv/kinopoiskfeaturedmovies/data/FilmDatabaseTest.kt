@@ -59,7 +59,7 @@ class FilmDatabaseTest {
 
     @Test
     fun insertFilms() = runBlocking {
-        dao.insertFilmInfo(filmInfoEntity)
+        db.dao.insertFilmInfo(filmInfoEntity)
         val filmsEntity = FilmsEntity(page = 1, films = listOf(film), pagesCount = 1)
         dao.insertFilms(filmsEntity)
         val result = dao.getFilmsPage(1)

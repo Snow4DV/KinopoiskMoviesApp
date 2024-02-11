@@ -2,19 +2,10 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="FilmRepositoryImplTest">
-        <State />
-      </entry>
-      <entry key="addFilmsAndGetIdSet()">
+      <entry key="Tests in 'ru'">
         <State />
       </entry>
       <entry key="app">
-        <State />
-      </entry>
-      <entry key="removeFavoriteFilmFromRoomDb()">
-        <State />
-      </entry>
-      <entry key="removeFilmsAndCheckIfIdsAreAbsent()">
         <State />
       </entry>
     </value>

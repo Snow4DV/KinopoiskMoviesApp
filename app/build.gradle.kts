@@ -121,14 +121,16 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0-beta01")
     // hilt tests
     testImplementation("com.google.dagger:hilt-android-testing:2.50")
-
     kaptTest("com.google.dagger:hilt-android-compiler:2.50")
     testAnnotationProcessor("com.google.dagger:hilt-android-compiler:2.50")
-
-
-
     androidTestImplementation("com.google.dagger:hilt-android-testing:2.50")
     kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.50")
     androidTestAnnotationProcessor("com.google.dagger:hilt-android-compiler:2.50")
 
+
+    // mockk
+    testImplementation("io.mockk:mockk:1.12.4")
+
+    // okhttp for mockwebserver
+    testImplementation("com.squareup.okhttp3:mockwebserver:5.0.0-alpha.12")
 }
