@@ -28,6 +28,7 @@ class FilmInfoViewModel @Inject constructor(
 
     fun loadData(filmId: Long?) {
         if(filmId == null) return
+        _state.value = FilmInfoScreenState()
         viewModelScope.launch(Dispatchers.IO) {
             filmRepository.getFilmInfo(filmId).onEach {  resource ->
                 when(resource) {

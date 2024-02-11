@@ -225,16 +225,18 @@ class MainActivity : ComponentActivity() {
                             }
                         }
 
-                        FilmInfoScreen(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .fillMaxWidth(animateFilmInfoWidth.value),
-                            onBackClick = {
-                                filmInfoIdState.value = null
-                            },
-                            filmInfoViewModel = filmInfoViewModel,
-                            filmId = filmInfoIdState
-                        )
+                        if(animateFilmInfoWidth.value > 0f) {
+                            FilmInfoScreen(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .fillMaxWidth(animateFilmInfoWidth.value),
+                                onBackClick = {
+                                    filmInfoIdState.value = null
+                                },
+                                filmInfoViewModel = filmInfoViewModel,
+                                filmId = filmInfoIdState
+                            )
+                        }
                     }
                 }
             }
