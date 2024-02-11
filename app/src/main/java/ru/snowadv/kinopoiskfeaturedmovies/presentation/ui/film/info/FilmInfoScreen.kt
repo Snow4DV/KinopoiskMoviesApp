@@ -68,6 +68,8 @@ import ru.snowadv.kinopoiskfeaturedmovies.R
 import ru.snowadv.kinopoiskfeaturedmovies.domain.model.FilmInfo
 import ru.snowadv.kinopoiskfeaturedmovies.feat.util.SampleData
 import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.common.ErrorMessageBox
+import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.common.getBlankString
+import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.common.shimmerEffect
 import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.theme.KinopoiskFeaturedMoviesTheme
 import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.view_model.FilmInfoViewModel
 import kotlin.math.abs
@@ -95,13 +97,13 @@ fun FilmInfoScreen(
     Box(
         modifier = modifier
     ) {
-        state.film?.let {
+        if(state.error == null) {
             FilmInfoScreenContent(
                 modifier = Modifier.fillMaxSize(),
                 filmInfo = state.film,
                 onBackClick = onBackClick
             )
-        } ?: run {
+        } else {
             if (!state.loading) {
                 ErrorMessageBox(
                     modifier = Modifier.fillMaxSize(),
@@ -113,33 +115,21 @@ fun FilmInfoScreen(
                     } else null,
                     defaultStringResId = R.string.choose_film
                 )
-                if(filmId.value != null) {
-                    Icon(
-                        modifier = with(LocalDensity.current) {
-                            Modifier
-                                .height(29.sp.toDp() + 22.dp)
-                                .width(29.sp.toDp() + 10.dp)
-                                .padding(top = 22.dp, start = 10.dp)
-                                .clickable(onClick = onBackClick)
-                        },
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.back),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
             }
         }
-        if (state.loading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.width(48.dp),
-                    color = MaterialTheme.colorScheme.primary,
-                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                )
-            }
+        if(filmId.value != null) {
+            Icon(
+                modifier = with(LocalDensity.current) {
+                    Modifier
+                        .height(29.sp.toDp() + 22.dp)
+                        .width(29.sp.toDp() + 10.dp)
+                        .padding(top = 22.dp, start = 10.dp)
+                        .clickable(onClick = onBackClick)
+                },
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = stringResource(R.string.back),
+                tint = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }
@@ -148,7 +138,7 @@ fun FilmInfoScreen(
 @Composable
 fun FilmInfoScreenContent(
     modifier: Modifier = Modifier,
-    filmInfo: FilmInfo,
+    filmInfo: FilmInfo?,
     onBackClick: () -> Unit
 
 ) {
@@ -210,10 +200,10 @@ fun FilmInfoScreenContent(
     Box(
         modifier = modifier
     ) {
-        if (!closeToPosterSize) {
+        if (!closeToPosterSize)  {
             SubcomposeAsyncImage(
-                model = filmInfo.posterUrl,
-                contentDescription = filmInfo.nameRu ?: stringResource(R.string.no_name),
+                model = filmInfo?.posterUrl,
+                contentDescription = filmInfo?.nameRu ?: stringResource(R.string.no_name),
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight()
@@ -233,18 +223,44 @@ fun FilmInfoScreenContent(
                             )
                         })
                     )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .shimmerEffect(round = false)
+                    )
                 }
             }
         }
-        AsyncImage(
-            model = filmInfo.posterUrl,
-            contentScale = if (closeToPosterSize) ContentScale.Crop else ContentScale.FillHeight,
-            contentDescription = filmInfo.nameRu ?: stringResource(R.string.no_name),
-            modifier = Modifier
-                .width(posterWidth)
-                .height(posterHeight),
-            placeholder = ColorPainter(Color.LightGray)
-        )
+        if(filmInfo?.posterUrl != null) {
+            SubcomposeAsyncImage(
+                model = filmInfo.posterUrl,
+                contentDescription = filmInfo.nameRu ?: stringResource(R.string.no_name),
+                modifier = Modifier
+                    .width(posterWidth)
+                    .height(posterHeight)
+            ) {
+                when(painter.state) {
+                    is AsyncImagePainter.State.Success -> {
+                        Image(
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = if (closeToPosterSize) ContentScale.Crop else ContentScale.FillHeight,
+                            painter = painter,
+                            contentDescription = null
+                        )
+                    }
+                    else -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize().shimmerEffect(round = false)
+                        )
+                    }
+                }
+            }
+        } else {
+            Box(
+                modifier = Modifier.fillMaxSize().shimmerEffect(round = false)
+            )
+        }
         Icon( // a little bit hacky and blur is expensive. I would ask designer to reconsider this
             modifier = with(LocalDensity.current) {
                 Modifier
@@ -313,23 +329,36 @@ fun FilmInfoScreenContent(
                             )
                         ) {
                             Text(
-                                text = filmInfo.nameRu ?: filmInfo.nameEn ?: filmInfo.nameOriginal
+                                text = filmInfo?.let { filmInfo.nameRu ?: filmInfo.nameEn ?: filmInfo.nameOriginal
                                 ?: stringResource(
                                     id = R.string.no_name
-                                ),
+                                ) } ?: "",
                                 fontSize = fontSizeTitle,
                                 fontWeight = FontWeight.SemiBold,
-                                modifier = Modifier.padding(bottom = 3.dp)
+                                modifier = Modifier
+                                    .padding(bottom = 3.dp)
+                                    .let {
+                                        if (filmInfo == null) it
+                                            .shimmerEffect()
+                                            .fillMaxWidth(0.8f) else it
+                                    }
                             )
                             Text(
-                                modifier = Modifier.padding(2.dp),
-                                text = filmInfo.description
+                                modifier = Modifier
+                                    .padding(2.dp)
+                                    .let {
+                                        if (filmInfo == null) it
+                                            .shimmerEffect()
+                                            .fillMaxWidth(1f)
+                                            .height(150.dp) else it
+                                    },
+                                text = if(filmInfo == null) " " else filmInfo.description
                                     ?: stringResource(R.string.no_description),
                                 fontSize = fontSizeSecondary,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 lineHeight = (fontSizeSecondary.value + 2).sp
                             )
-                            if (filmInfo.genres.isNotEmpty()) {
+                            if (filmInfo?.genres?.isNotEmpty() == true) {
                                 Row {
                                     Text(
                                         text = stringResource(if (filmInfo.genres.size == 1) R.string.genre else R.string.genres),
@@ -346,12 +375,10 @@ fun FilmInfoScreenContent(
                                     )
                                 }
                             }
-                            if (filmInfo.countries.isNotEmpty()) {
+                            if (filmInfo?.countries?.isNotEmpty() == true) {
                                 Row {
                                     Text(
-                                        text = stringResource(
-                                            if (filmInfo.countries.size == 1) R.string.country else R.string.countries
-                                        ),
+                                        text = stringResource(if (filmInfo.countries.size == 1) R.string.country else R.string.countries),
                                         fontSize = fontSizeSecondary,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         lineHeight = (fontSizeSecondary.value + 2).sp,
@@ -365,7 +392,7 @@ fun FilmInfoScreenContent(
                                     )
                                 }
                             }
-                            filmInfo.year?.let { year ->
+                            filmInfo?.year?.let { year ->
                                 Row {
                                     Text(
                                         text = stringResource(R.string.prod_year),
