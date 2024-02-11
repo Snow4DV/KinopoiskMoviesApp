@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">KinopoiskFeaturedMovies</string>
+    <string name="app_name">Фильмы (Кинопоиск)</string>
     <string name="no_name">Без названия</string>
     <string name="no_genre">Без жанра</string>
     <string name="feature_film">Сохранить в избранное</string>
