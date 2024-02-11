@@ -152,16 +152,15 @@ fun SearchFilmScreenContent(
                     )
                 } else {
                     if (loading) {
-                        Box(
+                        FilmsList(
                             modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.width(48.dp),
-                                color = MaterialTheme.colorScheme.primary,
-                                trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                            )
-                        }
+                            films = List(20) {null},
+                            favoriteIds = emptySet(),
+                            onClick = {},
+                            onLongClick = {},
+                            hasMore = false,
+                            loadMore = {}
+                        )
 
                     } else {
                         ErrorMessageBox(

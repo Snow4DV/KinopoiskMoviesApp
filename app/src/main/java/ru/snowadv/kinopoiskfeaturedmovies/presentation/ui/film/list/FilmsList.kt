@@ -23,11 +23,10 @@ import ru.snowadv.kinopoiskfeaturedmovies.R
 import ru.snowadv.kinopoiskfeaturedmovies.domain.model.Film
 import ru.snowadv.kinopoiskfeaturedmovies.feat.util.SampleData
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FilmsList(
     modifier: Modifier = Modifier,
-    films: List<Film>,
+    films: List<Film?>,
     favoriteIds: Set<Long>,
     onClick: (Film) -> Unit,
     onLongClick: (Film) -> Unit,
@@ -47,7 +46,7 @@ fun FilmsList(
                 modifier = Modifier
                     .fillMaxWidth(),
                 film = film,
-                favorite = film.filmId in favoriteIds,
+                favorite = film != null && film.filmId in favoriteIds,
                 onClick = onClick,
                 onLongClick = onLongClick
             )

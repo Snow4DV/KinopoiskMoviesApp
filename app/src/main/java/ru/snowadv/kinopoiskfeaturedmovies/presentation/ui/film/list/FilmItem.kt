@@ -1,6 +1,7 @@
 package ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.film.list
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -37,15 +39,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
+import coil.compose.SubcomposeAsyncImage
 import ru.snowadv.kinopoiskfeaturedmovies.R
 import ru.snowadv.kinopoiskfeaturedmovies.domain.model.Film
 import ru.snowadv.kinopoiskfeaturedmovies.feat.util.SampleData
+import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.common.getBlankString
+import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.common.shimmerEffect
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FilmItem(
     modifier: Modifier = Modifier,
-    film: Film,
+    film: Film?,
     favorite: Boolean,
     onClick: (Film) -> Unit = {},
     onLongClick: (Film) -> Unit = {}
@@ -53,16 +59,12 @@ fun FilmItem(
     val imageClipShape = remember { RoundedCornerShape(5.dp) }
     val cardClipShape = remember { RoundedCornerShape(15.dp) }
 
-    val genre = film.genres.firstOrNull()?.replaceFirstChar { it.uppercaseChar() }
-        ?: stringResource(R.string.no_genre)
+    val genre = if (film != null) film.genres.firstOrNull()?.replaceFirstChar { it.uppercaseChar() }
+        ?: stringResource(R.string.no_genre) else " "
     Card(
         shape = cardClipShape,
         modifier = modifier
-            .padding(8.dp)
-            .combinedClickable(
-                onClick = { onClick(film) },
-                onLongClick = { onLongClick(film) }
-            ),
+            .padding(8.dp),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 20.dp
         ),
@@ -71,66 +73,119 @@ fun FilmItem(
         )
     ) {
         Box(
-            modifier = Modifier.padding(5.dp)
-        ) {
-            Row(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .height(100.dp)
-            ) {
-                AsyncImage(
-                    model = film.posterUrlPreview,
-                    contentScale = ContentScale.Crop,
-                    contentDescription = film.nameRu ?: film.nameEn
-                    ?: stringResource(R.string.no_name),
-                    modifier = Modifier
-                        .width(73.dp)
-                        .fillMaxHeight()
-                        .padding(11.dp)
-                        .clip(shape = imageClipShape),
-                    placeholder = ColorPainter(Color.LightGray),
+            modifier = Modifier.fillMaxSize()
+                .combinedClickable(
+                    onClick = {
+                        if (film != null) {
+                            onClick(film)
+                        }
+                    },
+                    onLongClick = {
+                        if (film != null) {
+                            onLongClick(film)
+                        }
+                    }
                 )
-                Spacer(modifier = Modifier.width(5.dp))
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .weight(1.0f),
-                    verticalArrangement = Arrangement.Center
+        ) {
+            Box(
+                modifier = Modifier.padding(5.dp)
+            ) {
+                Row(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .height(100.dp)
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
+                    if (film != null) {
+                        SubcomposeAsyncImage(
+                            model = film.posterUrlPreview,
+                            contentScale = ContentScale.Crop,
+                            contentDescription = film.nameRu ?: film.nameEn
+                            ?: stringResource(R.string.no_name),
+                            modifier = Modifier
+                                .width(73.dp)
+                                .fillMaxHeight()
+                                .padding(11.dp)
+                                .clip(shape = imageClipShape),
+                        ) {
+                            if (painter.state is AsyncImagePainter.State.Success) {
+                                Image(
+                                    contentScale = contentScale,
+                                    modifier = Modifier.fillMaxSize(),
+                                    painter = painter,
+                                    contentDescription = contentDescription
+                                )
+                            } else {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .shimmerEffect(round = false)
+                                )
+                            }
+                        }
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .width(73.dp)
+                                .fillMaxHeight()
+                                .padding(11.dp)
+                                .clip(shape = imageClipShape)
+                                .shimmerEffect(round = false)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(5.dp))
+                    Column(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .weight(1.0f),
+                        verticalArrangement = Arrangement.Center
                     ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .let {
+                                        if (film == null) it
+                                            .shimmerEffect()
+                                            .fillMaxWidth(0.6f) else it.weight(1.0f)
+                                    },
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                text = if (film != null) film.nameRu ?: film.nameEn
+                                ?: stringResource(R.string.no_name) else " ",
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1
+                            )
+                            if (favorite) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.icon),
+                                    contentDescription = stringResource(R.string.feature_film),
+                                    tint = colorResource(id = R.color.primary),
+                                    modifier = Modifier
+                                        .height(with(LocalDensity.current) { 18.sp.toDp() })
+                                        .padding(end = 10.dp, start = 5.dp)
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(5.dp))
                         Text(
-                            modifier = Modifier.weight(1.0f),
-                            fontSize = 16.sp,
+                            modifier = Modifier
+                                .let {
+                                    if (film == null) it
+                                        .shimmerEffect()
+                                        .fillMaxWidth(0.3f) else it
+                                },
+                            fontSize = 14.sp,
+                            color = Color.Gray,
                             fontWeight = FontWeight.SemiBold,
-                            text = film.nameRu ?: film.nameEn ?: stringResource(R.string.no_name),
+                            text = if (film != null) "$genre (${film.year ?: stringResource(R.string.no_year)})" else " ",
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1
                         )
-                        if (favorite) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.icon),
-                                contentDescription = stringResource(R.string.feature_film),
-                                tint = colorResource(id = R.color.primary),
-                                modifier = Modifier
-                                    .height(with(LocalDensity.current) { 18.sp.toDp() })
-                                    .padding(end = 10.dp, start = 5.dp)
-                            )
-                        }
                     }
 
-                    Spacer(modifier = Modifier.height(5.dp))
-                    Text(
-                        fontSize = 14.sp,
-                        color = Color.Gray,
-                        fontWeight = FontWeight.SemiBold,
-                        text = "$genre (${film.year ?: stringResource(R.string.no_year)})",
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
-                    )
                 }
-
             }
         }
     }
