@@ -1,5 +1,6 @@
 package ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.common
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues

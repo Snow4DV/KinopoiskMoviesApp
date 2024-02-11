@@ -2,10 +2,13 @@ package ru.snowadv.kinopoiskfeaturedmovies.presentation
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -81,13 +84,20 @@ class MainActivity : ComponentActivity() {
             val isHorizontal = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
             val coroutineScope = rememberCoroutineScope()
 
+            BackHandler(
+                enabled = isHorizontal && filmInfoIdState.value != null
+            ) {
+                filmInfoIdState.value = null
+            }
+
+            Log.d("TAG", "onCreate: film id is ${filmInfoIdState.value}")
 
             LaunchedEffect(isHorizontal) {
                 if(isHorizontal && navBackStackEntry.value?.destination?.route?.startsWith(MainScreen.FilmInfo.noArgRoute) == true) {
                     navController.popBackStack()
                 } else if(!isHorizontal && filmInfoIdState.value != null) {
                     coroutineScope.launch {
-                        //eventAggregator.navigationChannel.send(NavigationEvent.ToFilmInfo(filmInfoIdState.value))
+                        eventAggregator.navigationChannel.send(NavigationEvent.ToFilmInfo(filmInfoIdState.value))
                     }
                 }
             }
@@ -151,7 +161,7 @@ class MainActivity : ComponentActivity() {
                         NavHost(
                             modifier = Modifier
                                 .fillMaxHeight()
-                                .fillMaxWidth(if (isHorizontal) 0.5f else 1.0f),
+                                .fillMaxWidth(if (isHorizontal) 0.5f else 1f),
                             navController = navController,
                             startDestination = MainScreen.Home.route
                         ) {
@@ -167,12 +177,17 @@ class MainActivity : ComponentActivity() {
                             ) { navBackStackEntry ->
                                 val filmId =
                                     navBackStackEntry.arguments?.getString("id")?.toLongOrNull()
-                                filmId?.let { id -> filmInfoIdState.value = id }
+                                LaunchedEffect(filmId) {
+                                    if(!isHorizontal && filmId != null) {
+                                        filmInfoIdState.value = filmId
+                                    }
+                                }
                                 FilmInfoScreen(
                                     modifier = Modifier.fillMaxSize(),
                                     onBackClick = {
                                         navController.popBackStack()
                                         filmInfoIdState.value = null
+                                        Log.d("TAG", "onCreate: erased filmInfoID state ; w now is ${filmInfoIdState.value}")
                                     },
                                     filmInfoViewModel = filmInfoViewModel,
                                     filmId = filmInfoIdState
@@ -184,20 +199,18 @@ class MainActivity : ComponentActivity() {
                             }
                         }
 
-                        FilmInfoScreen(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .fillMaxWidth(if (isHorizontal) 1f else 0f),
-                            onBackClick = {
-                                if(isHorizontal) {
+                        if(isHorizontal) {
+                            FilmInfoScreen(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .weight(1f),
+                                onBackClick = {
                                     filmInfoIdState.value = null
-                                } else {
-                                    navController.popBackStack()
-                                }
-                            },
-                            filmInfoViewModel = filmInfoViewModel,
-                            filmId = filmInfoIdState
-                        )
+                                },
+                                filmInfoViewModel = filmInfoViewModel,
+                                filmId = filmInfoIdState
+                            )
+                        }
                     }
                 }
             }

@@ -1,6 +1,9 @@
 package ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.film.info
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.OverscrollConfiguration
 import androidx.compose.foundation.background
@@ -13,6 +16,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -39,9 +43,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -52,12 +60,16 @@ import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
+import coil.compose.SubcomposeAsyncImage
 import ru.snowadv.kinopoiskfeaturedmovies.R
 import ru.snowadv.kinopoiskfeaturedmovies.domain.model.FilmInfo
 import ru.snowadv.kinopoiskfeaturedmovies.feat.util.SampleData
 import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.common.ErrorMessageBox
 import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.theme.KinopoiskFeaturedMoviesTheme
 import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.view_model.FilmInfoViewModel
+import kotlin.math.abs
+import kotlin.math.max
 
 @Composable
 fun FilmInfoScreen(
@@ -69,6 +81,11 @@ fun FilmInfoScreen(
 
     LaunchedEffect(filmId.value) {
         filmInfoViewModel.loadData(filmId.value)
+    }
+
+    BackHandler { // Handle back click by myself to erase film id's state
+        onBackClick()
+        Log.d("TAG", "FilmInfoScreen: pressed back")
     }
 
     val state = filmInfoViewModel.state.value
@@ -83,11 +100,11 @@ fun FilmInfoScreen(
                 onBackClick = onBackClick
             )
         } ?: run {
-            if(!state.loading) {
+            if (!state.loading) {
                 ErrorMessageBox(
                     modifier = Modifier.fillMaxSize(),
                     errorMessage = state.error,
-                    onRefresh = if(state.error != null) {
+                    onRefresh = if (state.error != null) {
                         {
                             filmInfoViewModel.loadData(filmId.value)
                         }
@@ -96,7 +113,7 @@ fun FilmInfoScreen(
                 )
             }
         }
-        if(state.loading) {
+        if (state.loading) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -159,13 +176,53 @@ fun FilmInfoScreenContent(
 
     val pullBarHeight = 15.dp
 
-    val scrollThingShape = remember {RoundedCornerShape(25.dp)}
+    val scrollThingShape = remember { RoundedCornerShape(25.dp) }
+
+    val closeToPosterSize = abs(posterHeight.value - posterWidth.value / 27.0 * 40.0) < 30
+
+    val contentScale = remember {
+        object : ContentScale {
+            override fun computeScaleFactor(srcSize: Size, dstSize: Size): ScaleFactor {
+                val widthScale = dstSize.width / srcSize.width
+                val heightScale = dstSize.height / srcSize.height
+                val maxScaleMultiplied = max(widthScale, heightScale) * 1.3f
+                return ScaleFactor(maxScaleMultiplied, maxScaleMultiplied)
+            }
+
+        }
+    }
     Box(
         modifier = modifier
     ) {
+        if (!closeToPosterSize) {
+            SubcomposeAsyncImage(
+                model = filmInfo.posterUrl,
+                contentDescription = filmInfo.nameRu ?: stringResource(R.string.no_name),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+            ) {
+                if (painter.state is AsyncImagePainter.State.Success) {
+                    Image(
+                        contentScale = contentScale,
+                        modifier = Modifier.fillMaxSize(),
+                        painter = painter,
+                        contentDescription = contentDescription,
+                        colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply {
+                            setToScale(
+                                redScale = 0.5f,
+                                greenScale = 0.5f,
+                                blueScale = 0.5f,
+                                alphaScale = 1f
+                            )
+                        })
+                    )
+                }
+            }
+        }
         AsyncImage(
             model = filmInfo.posterUrl,
-            contentScale = ContentScale.Crop,
+            contentScale = if (closeToPosterSize) ContentScale.Crop else ContentScale.FillHeight,
             contentDescription = filmInfo.nameRu ?: stringResource(R.string.no_name),
             modifier = Modifier
                 .width(posterWidth)
