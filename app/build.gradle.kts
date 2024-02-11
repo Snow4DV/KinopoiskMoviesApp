@@ -19,7 +19,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "ru.snowadv.kinopoiskfeaturedmovies.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -92,11 +92,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
 
-    // dagger hilt
-    implementation("com.google.dagger:hilt-android:2.50")
-    ksp ("com.google.dagger:hilt-android-compiler:2.50")
 
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0-beta01")
 
 
     // retrofit
@@ -116,4 +112,23 @@ dependencies {
 
     // coil
     implementation("io.coil-kt:coil-compose:2.5.0")
+
+
+    // dagger hilt
+    implementation("com.google.dagger:hilt-android:2.50")
+    kapt ("com.google.dagger:hilt-android-compiler:2.50")
+
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0-beta01")
+    // hilt tests
+    testImplementation("com.google.dagger:hilt-android-testing:2.50")
+
+    kaptTest("com.google.dagger:hilt-android-compiler:2.50")
+    testAnnotationProcessor("com.google.dagger:hilt-android-compiler:2.50")
+
+
+
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.50")
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.50")
+    androidTestAnnotationProcessor("com.google.dagger:hilt-android-compiler:2.50")
+
 }

@@ -5,6 +5,9 @@
       <entry key="FilmInfoScreenContentPreview">
         <State />
       </entry>
+      <entry key="FilmsDaoTest">
+        <State />
+      </entry>
       <entry key="SearchFilmScreenPreview">
         <State />
       </entry>
@@ -12,9 +15,6 @@
         <State />
       </entry>
       <entry key="SearchTopBarPreviewWithSearchBar">
-        <State />
-      </entry>
-      <entry key="SearchTopBarPreviewWithTitle">
         <State />
       </entry>
       <entry key="app">
