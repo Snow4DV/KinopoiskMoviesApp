@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -153,7 +155,14 @@ class MainActivity : ComponentActivity() {
                             hostState = snackbarHostState,
                             modifier = Modifier
                                 .padding(bottom = snackbarPadding.value)
-                                .fillMaxWidth()
+                                .fillMaxWidth(),
+                            snackbar = {
+                                Snackbar(
+                                    snackbarData = it,
+                                    containerColor = MaterialTheme.colorScheme.surface,
+                                    contentColor = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
                         )
                     },
                     modifier = Modifier.fillMaxSize()
