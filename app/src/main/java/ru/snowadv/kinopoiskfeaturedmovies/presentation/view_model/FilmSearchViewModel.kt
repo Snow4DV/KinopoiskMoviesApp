@@ -10,6 +10,7 @@ import coil.imageLoader
 import coil.request.ImageRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -40,6 +41,8 @@ class FilmSearchViewModel @Inject constructor(
 
     private var dataLoaded: Boolean = false
 
+    private var curLoadJob: Job? = null
+
     init {
         viewModelScope.launch {
             filmRepository.getFavoriteFilmsIds().onEach {
@@ -69,7 +72,8 @@ class FilmSearchViewModel @Inject constructor(
     }
 
     fun refresh() {
-        viewModelScope.launch {
+        curLoadJob?.cancel()
+        curLoadJob = viewModelScope.launch {
             stateMutex.withLock {
                 _state.value = state.value.copy(
                     films = emptyList()
@@ -91,7 +95,8 @@ class FilmSearchViewModel @Inject constructor(
         if (currentPage.intValue < availablePages.intValue) {
             val beforeLoad = state.value.films
             currentPage.intValue = currentPage.intValue + 1
-            viewModelScope.launch(Dispatchers.IO) {
+            curLoadJob?.cancel()
+            curLoadJob = viewModelScope.launch(Dispatchers.IO) {
                 stateMutex.withLock {
                     filmRepository.getPopularFilms(currentPage.intValue + 1).onEach { resource ->
                         availablePages.intValue = resource.data?.pagesCount ?: availablePages.intValue
