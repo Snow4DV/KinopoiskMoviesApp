@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,10 +38,12 @@ fun FilmsList(
         modifier = modifier.padding(start = 10.dp, end = 10.dp, top = 0.dp, bottom = 5.dp)
     ) {
         itemsIndexed(films) { index, film ->
-            if(index == 0) {
-                Spacer(modifier = Modifier
-                    .fillMaxWidth()
-                    .height(13.dp))
+            if (index == 0) {
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(13.dp)
+                )
             }
             FilmItem(
                 modifier = Modifier
@@ -52,11 +55,14 @@ fun FilmsList(
             )
         }
 
-        if(films.isNotEmpty() && hasMore) {
+        if (films.isNotEmpty() && hasMore) {
             item {
                 Box(modifier = Modifier.fillMaxWidth()) {
                     Button(onClick = loadMore, modifier = Modifier.align(Alignment.Center)) {
-                        Text(stringResource(R.string.load_more))
+                        Text(
+                            text = stringResource(R.string.load_more),
+                            color = Color.White
+                        )
                     }
                 }
             }
