@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 #local.properties yeah that's bad but interviewer needs to build my app somehow
+app/release
+/app/release
