@@ -50,7 +50,7 @@ import ru.snowadv.kinopoiskfeaturedmovies.feat.util.NavigationEvent
 import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.film.info.FilmInfoScreen
 import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.home.HomeScreen
 import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.theme.KinopoiskFeaturedMoviesTheme
-import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.view_model.FilmInfoViewModel
+import ru.snowadv.kinopoiskfeaturedmovies.presentation.view_model.FilmInfoViewModel
 import javax.inject.Inject
 
 @AndroidEntryPoint

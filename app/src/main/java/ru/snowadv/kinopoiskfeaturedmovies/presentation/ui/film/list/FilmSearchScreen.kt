@@ -32,7 +32,7 @@ import ru.snowadv.kinopoiskfeaturedmovies.feat.util.SampleData
 import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.common.ErrorMessageBox
 import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.common.SearchTopBar
 import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.theme.KinopoiskFeaturedMoviesTheme
-import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.view_model.FilmSearchViewModel
+import ru.snowadv.kinopoiskfeaturedmovies.presentation.view_model.FilmSearchViewModel
 import java.util.Locale
 
 @Composable

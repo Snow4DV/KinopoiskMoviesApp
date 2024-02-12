@@ -71,7 +71,7 @@ import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.common.ErrorMessageBox
 import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.common.getBlankString
 import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.common.shimmerEffect
 import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.theme.KinopoiskFeaturedMoviesTheme
-import ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.view_model.FilmInfoViewModel
+import ru.snowadv.kinopoiskfeaturedmovies.presentation.view_model.FilmInfoViewModel
 import kotlin.math.abs
 import kotlin.math.max
 

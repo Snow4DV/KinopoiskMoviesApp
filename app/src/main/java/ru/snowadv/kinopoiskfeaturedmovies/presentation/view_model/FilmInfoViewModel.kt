@@ -1,4 +1,4 @@
-package ru.snowadv.kinopoiskfeaturedmovies.presentation.ui.view_model
+package ru.snowadv.kinopoiskfeaturedmovies.presentation.view_model
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
