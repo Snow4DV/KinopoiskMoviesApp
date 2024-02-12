@@ -16,6 +16,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.mockwebserver.MockWebServer
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.snowadv.kinopoiskfeaturedmovies.data.MockedFailingKinopoiskApi
@@ -40,6 +41,7 @@ import ru.snowadv.kinopoiskfeaturedmovies.data.repository.FilmRepositoryImpl
 import ru.snowadv.kinopoiskfeaturedmovies.domain.model.Film
 import ru.snowadv.kinopoiskfeaturedmovies.domain.repository.FilmRepository
 import java.util.concurrent.TimeUnit
+import javax.inject.Named
 import javax.inject.Singleton
 
 
@@ -108,11 +110,12 @@ object TestAppModule {
     }
 
     @Provides
+    @Named("retrofit")
     @Singleton
-    fun provideApi(okHttpClient: OkHttpClient, factory: GsonConverterFactory): KinopoiskApi {
+    fun provideApi(okHttpClient: OkHttpClient, factory: GsonConverterFactory, mockWebServer: MockWebServer): KinopoiskApi {
         return Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl(KinopoiskApi.BASE_URL)
+            .baseUrl(mockWebServer.url("/"))
             .addConverterFactory(factory)
             .build()
             .create(KinopoiskApi::class.java)
@@ -276,6 +279,12 @@ object TestAppModule {
     @Provides
     fun provideFilmsRepository(api: MockedKinopoiskApi, dao: FilmsDao): FilmRepository {
         return FilmRepositoryImpl(api, dao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMockWebServer(): MockWebServer {
+        return MockWebServer()
     }
 
 }

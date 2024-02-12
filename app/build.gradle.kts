@@ -133,4 +133,5 @@ dependencies {
 
     // okhttp for mockwebserver
     testImplementation("com.squareup.okhttp3:mockwebserver:5.0.0-alpha.12")
+    androidTestImplementation("com.squareup.okhttp3:mockwebserver:5.0.0-alpha.12")
 }

@@ -2,10 +2,16 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="Tests in 'ru'">
+      <entry key="FilmDatabaseTest">
+        <State />
+      </entry>
+      <entry key="RetrofitKinopoiskApiTest">
         <State />
       </entry>
       <entry key="app">
+        <State />
+      </entry>
+      <entry key="testGetFilms()">
         <State />
       </entry>
     </value>
